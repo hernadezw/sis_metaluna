@@ -20,8 +20,6 @@
 
     </head>
     <body class="bg-gray-200">
-
-
         <livewire:pages.layout.navbar />
         <livewire:pages.layout.drawer />
 
