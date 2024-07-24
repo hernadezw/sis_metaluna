@@ -72,28 +72,42 @@
                 </tr>
             </thead>
             <tbody>
+                @if ($venta_reciente)
+                <tr class="border-b w-full">
+                    <td class="px-4 py-2 text-left align-top ">
+                        <div>
+                            <h2>Sin registro</h2>
+                        </div>
+                    </td>
+
+                </tr>
+
+
+                @else
                 @foreach($venta_reciente as $key => $value)
-                    <tr class="border-b w-full">
-                        <td class="px-4 py-2 text-left align-top ">
-                            <div>
-                                <h2>{{$value->no_venta}}</h2>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 text-left align-top ">
-                            <div>
-                                <h2>{{$value->cliente->nombres_cliente}}</h2>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 text-left align-top ">
-                            <div>
-                                <h2>{{$value->fecha_venta}} {{$value->hora_venta}}</h2>
-                            </div>
-                        </td>
-                        <td class="px-4 py-2 text-right text-cyan-500 ">
-                            <p><span>Q. {{$value->total_venta}}</span></p>
-                        </td>
-                    </tr>
-                @endforeach
+                <tr class="border-b w-full">
+                    <td class="px-4 py-2 text-left align-top ">
+                        <div>
+                            <h2>{{$value->no_venta}}</h2>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2 text-left align-top ">
+                        <div>
+                            <h2>{{$value->cliente->nombres_cliente}}</h2>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2 text-left align-top ">
+                        <div>
+                            <h2>{{$value->fecha_venta}} {{$value->hora_venta}}</h2>
+                        </div>
+                    </td>
+                    <td class="px-4 py-2 text-right text-cyan-500 ">
+                        <p><span>Q. {{$value->total_venta}}</span></p>
+                    </td>
+                </tr>
+            @endforeach
+
+                @endif
             </tbody>
         </table>
     </div>
