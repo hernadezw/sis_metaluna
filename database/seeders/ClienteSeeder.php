@@ -16,7 +16,7 @@ class ClienteSeeder extends Seeder
     public function run()
     {
         DB::table('clientes')->insert(['codigo_interno'=>'1','codigo_mayorista'=>null,'nit'=>'c/f','nombre_empresa'=>'Sin especificar',
-        'nombres_cliente'=>'Consumidor Final','apellidos_cliente'=>'','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'00000000','direccion_fisica'=>'Ciudad','direccion_departamento'=>1,'direccion_municipio'=> 1,
+        'nombres_cliente'=>'Consumidor Final','apellidos_cliente'=>'no aplica','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'00000000','direccion_fisica'=>'Ciudad','direccion_departamento'=>1,'direccion_municipio'=> 1,
         'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'0.00','credito_actual'=>'0.00','dias_limite_credito'=>'0','tipo_cliente'=>'MINO','created_at'=>'2024-07-04 06:41:51','updated_at'=>'2024-07-04 06:41:51']);
 
         DB::table('clientes')->insert(['codigo_interno'=>'2','codigo_mayorista'=>'1','nit'=>'00001','nombre_empresa'=>'Ferreteria la Luz',
