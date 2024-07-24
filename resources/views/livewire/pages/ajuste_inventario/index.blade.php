@@ -4,7 +4,8 @@
         <x-frk.components.button label="agregar {{$title}}" wire:click="create()" />
     </x-slot:head>
     <x-slot:body>
-        <livewire:powergrid.ajuste-inventario-table/>
+
+        <livewire:powergrid.ajuste-inventario-tablee/>
     </x-slot:body>
     <x-slot:footer>
         @if($isCreate)

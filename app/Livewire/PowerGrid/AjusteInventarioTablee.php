@@ -16,13 +16,13 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
-final class AjusteInventarioTable extends PowerGridComponent
+final class AjusteInventarioTablee extends PowerGridComponent
 {
     use WithExport;
 
     public function setUp(): array
     {
-
+        $this->showCheckBox();
 
         return [
             Exportable::make('export')
@@ -48,7 +48,7 @@ final class AjusteInventarioTable extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-        ->add('ajuste_inventario_no')
+            ->add('ajuste_inventario_no')
             ->add('sucursal_id',fn ($data) => e($data->sucursal->nombre))
             ->add('producto_id',fn ($data) => e($data->producto->nombre))
             ->add('fecha_ajuste_inventario')
@@ -85,6 +85,7 @@ final class AjusteInventarioTable extends PowerGridComponent
     public function filters(): array
     {
         return [
+            Filter::datepicker('fecha_ajuste_inventario'),
         ];
     }
 
@@ -94,37 +95,24 @@ final class AjusteInventarioTable extends PowerGridComponent
         $this->js('alert('.$rowId.')');
     }
 
-
     public function actions(AjusteInventario $row): array
     {
         return [
+            Button::add('show')
+            ->slot('Mostrar')
+            ->id()
+            ->class('bg-yellow-500 hover:bg-yellow-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+            ->dispatch('show', ['rowId' => $row->id]),
 
-                Button::add('show')
-                ->slot('Mostrar')
-                ->id()
-                ->class('bg-yellow-500 hover:bg-yellow-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('show', ['rowId' => $row->id]),
-
-                Button::add('delete')
-                ->slot('Borrar')
-                ->id()
-                ->class('bg-red-500 hover:bg-red-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('delete', ['rowId' => $row->id])
-        ];
-    }
- /*
-    public function actions(AjusteInventario $row): array
-    {
-        return [
-            Button::add('edit')
-                ->slot('Edit: '.$row->id)
-                ->id()
-                ->class('pg-btn-white dark:ring-pg-primary-600 dark:border-pg-primary-600 dark:hover:bg-pg-primary-700 dark:ring-offset-pg-primary-800 dark:text-pg-primary-300 dark:bg-pg-primary-700')
-                ->dispatch('edit', ['rowId' => $row->id])
+            Button::add('delete')
+            ->slot('Borrar')
+            ->id()
+            ->class('bg-red-500 hover:bg-red-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+            ->dispatch('delete', ['rowId' => $row->id])
         ];
     }
 
-
+    /*
     public function actionRules($row): array
     {
        return [
