@@ -4,7 +4,7 @@
     </x-slot:head>
     <x-slot:body>
 
-        <livewire:powergrid.estado-cuenta-venta-table/>
+        <livewire:power-grid.estado-cuenta-venta-table/>
     </x-slot:body>
     <x-slot:footer>
         @if($isCreate)

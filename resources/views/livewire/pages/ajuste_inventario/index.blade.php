@@ -5,7 +5,7 @@
     </x-slot:head>
     <x-slot:body>
 
-        <livewire:powergrid.ajuste-inventario-tablee/>
+        <livewire:power-grid.ajuste-inventario-tablee/>
     </x-slot:body>
     <x-slot:footer>
         @if($isCreate)

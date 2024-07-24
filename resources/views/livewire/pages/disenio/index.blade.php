@@ -4,7 +4,7 @@
         <x-frk.components.button label="agregar {{$title}}" wire:click="create()" />
     </x-slot:head>
     <x-slot:body>
-        <livewire:powergrid.disenio-table/>
+        <livewire:power-grid.disenio-table/>
     </x-slot:body>
     <x-slot:footer>
         @if($isCreate)

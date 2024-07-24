@@ -4,7 +4,7 @@
 
     </x-slot:head>
     <x-slot:body>
-        <livewire:powergrid.credito-table/>
+        <livewire:power-grid.credito-table/>
     </x-slot:body>
     <x-slot:footer>
 
