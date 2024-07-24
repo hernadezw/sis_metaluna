@@ -57,32 +57,32 @@ Route::view('/', 'welcome');
         Route::get('cliente', ClienteController::class)->middleware('can:cliente')->name('cliente');
         Route::get('proveedor', ProveedorController::class)->middleware('can:proveedor')->name('proveedor');
         Route::get('inicio', InicioController::class)->name('inicio');
-        Route::get('compra', CompraController::class)->middleware('can:compra')->name('compra');
+        Route::get('compra', CompraController::class)->middleware('can:')->name('compra');
         Route::get('usuario', UsuarioController::class)->middleware('can:usuario')->name('usuario');
         Route::get('role',RoleController::class)->middleware('can:rol')->name('rol');
         Route::get('venta', VentaController::class)->middleware('can:venta')->name('venta');
-        Route::get('estado_cuenta', EstadoCuentaController::class)->name('estado_cuenta');
-        Route::get('estado_cuenta_venta', EstadoCuentaVentaController::class)->name('estado_cuenta_venta');
-        Route::get('ajuste_inventario', AjusteInventarioController::class)->name('ajuste_inventario');
-        Route::get('vehiculo', VehiculoController::class)->name('vehiculo');
-        Route::get('envio', EnvioController::class)->name('envio');
+        Route::get('estado_cuenta', EstadoCuentaController::class)->middleware('can:estado_cuenta')->name('estado_cuenta');
+        Route::get('estado_cuenta_venta', EstadoCuentaVentaController::class)->middleware('can:estado_cuenta_venta')->name('estado_cuenta_venta');
+        Route::get('ajuste_inventario', AjusteInventarioController::class)->middleware('can:ajuste_inventario')->name('ajuste_inventario');
+        Route::get('vehiculo', VehiculoController::class)->middleware('can:vehiculo')->name('vehiculo');
+        Route::get('envio', EnvioController::class)->middleware('can:envio')->name('envio');
 
-        Route::get('credito', CreditoController::class)->name('credito');
-        Route::get('cuenta_cobrar', CuentaCobrarController::class)->name('cuenta_cobrar');
-        Route::get('venta_rapida', VentaRapidaController::class)->name('venta_rapida');
-        Route::get('asignacion_ruta', AsignacionRutaController::class)->name('asignacion_ruta');
+        Route::get('credito', CreditoController::class)->middleware('can:credito')->name('credito');
+        Route::get('cuenta_cobrar', CuentaCobrarController::class)->middleware('can:cuenta_cobrar')->name('cuenta_cobrar');
+        Route::get('venta_rapida', VentaRapidaController::class)->middleware('can:venta_rapida')->name('venta_rapida');
+        Route::get('asignacion_ruta', AsignacionRutaController::class)->middleware('can:asignacion_ruta')->name('asignacion_ruta');
 
-        Route::get('ruta', RutaController::class)->name('ruta');
+        Route::get('ruta', RutaController::class)->middleware('can:ruta')->name('ruta');
 
-        Route::get('estado_envio', EstadoEnvioController::class)->name('estado_envio');
-        Route::get('envio', EnvioController::class)->name('envio');
+        Route::get('estado_envio', EstadoEnvioController::class)->middleware('can:estado_envio')->name('estado_envio');
+        Route::get('envio', EnvioController::class)->middleware('can:envio')->name('envio');
 
-        Route::get('sucursal', SucursalController::class)->name('sucursal');
-        Route::get('traslado', TrasladoController::class)->name('traslado');
+        Route::get('sucursal', SucursalController::class)->middleware('can:sucursal')->name('sucursal');
+        Route::get('traslado', TrasladoController::class)->middleware('can:traslado')->name('traslado');
 
-        Route::get('servicio', ServicioController::class)->name('servicio');
-        Route::get('abono', AbonoController::class)->name('abono');
-        Route::get('nota_credito', NotaCreditoController::class)->name('nota_credito');
+        Route::get('servicio', ServicioController::class)->middleware('can:servicio')->name('servicio');
+        Route::get('abono', AbonoController::class)->middleware('can:abono')->name('abono');
+        Route::get('nota_credito', NotaCreditoController::class)->middleware('can:nota_credito')->name('nota_credito');
 
         //Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 
