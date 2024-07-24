@@ -32,7 +32,7 @@
 <table style="border-collapse:collapse;margin-left:5.93pt" cellspacing="0">
     <tr style="height:13pt">
         <td style="width:570 pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="6" bgcolor="#F9E1D4">
-            <p class="s2" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">ABONO:</p>
+            <p class="s2" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">ABONO ANTICIPADO:</p>
         </td>
     </tr>
     <tr style="height:13pt">
@@ -45,13 +45,13 @@
     <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Fecha Venta:</p>
     </td>
     <td style="width:117pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p class="s3" style="padding-left: 11pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$venta['fecha_venta']}}</p>
+    <p class="s3" style="padding-left: 11pt;text-indent: 0pt;line-height: 12pt;text-align: left;">--</p>
     </td>
     <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
     <p class="s3" style="padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;">No. Venta</p>
     </td>
     <td style="width:12pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">{{$venta['no_venta']}}</p>
+    <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">--</p>
     </td>
 </tr>
 <tr style="height:13pt">
@@ -59,7 +59,7 @@
     <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Tipo Pago:</p>
     </td>
     <td style="width:111pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p class="s3" style="padding-left: 25pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$venta['forma_pago']}}</p>
+    <p class="s3" style="padding-left: 25pt;text-indent: 0pt;line-height: 12pt;text-align: left;">--</p>
     </td>
     <td style="width:84pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
     <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Envio:</p>
@@ -79,7 +79,7 @@
 <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Código:</p>
 </td>
 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-<p class="s4" style="text-indent: 0pt;text-align: center;">{{$cliente['codigo']}}</p>
+<p class="s4" style="text-indent: 0pt;text-align: center;">{{$cliente['codigo_mayorista']}}</p>
 </td>
 <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
 <p class="s3" style="padding-left: 10pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Telefono:</p>
@@ -154,7 +154,7 @@
     <p class="s3" style="text-indent: 0pt;text-align: center;">{{$abono['fecha_abono']}}</p>
     </td>
     <td style="width:95pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: center;">{{$abono['venta_id']}}</p>
+    <p class="s3" style="padding-left: 5pt;text-indent: 0pt;text-align: center;">--</p>
     </td>
     <td style="width:95pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
         <p class="s3" style="text-indent: 0pt;text-align: center;">{{$abono['saldo_credito']}}</p>
@@ -177,7 +177,7 @@
     <p class="s3" style="text-indent: 0pt;text-align: center;">{{$abono['tipo_pago']}}</p>
     </td>
     <td style="width:570 pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3" >
-        <p class="s3" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: star;">No Operacion: {{$abono['no_pago']}}</p>
+        <p class="s3" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: star;">No Operacion: </p>
     </td>
 </tr>
 <tr style="height:13pt">

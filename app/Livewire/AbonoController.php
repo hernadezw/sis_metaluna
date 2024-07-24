@@ -176,9 +176,9 @@ class AbonoController extends Component
         };
 
 
-
+        $this->dispatch('pg:eventRefresh-default');
         $this->cancel();
-        return redirect()->route('pdfExportarAbono',$this->no_abono);
+
     }
 
     public function storeAnticipado(){
@@ -321,12 +321,26 @@ public function storeAsignarAbonoAnticipado($value){
 
     public function pdfExportarAbono($id)
     {
-        $saldo_actual=0;
-        $saldo_anterior=0;
+
         $abono=Abono::with('venta')->find($id)->toArray();
-        $venta=Venta::find($abono['venta_id'])->toArray();
-        $no_venta=$abono['venta']['no_venta'];
-        $cliente=Cliente::find($abono['venta']['cliente_id'])->toArray();
+
+        $no_abono=$abono['no_abono'];
+        if($abono['venta_id']==null){
+
+            $cliente=Cliente::find($abono['cliente_id'])->toArray();
+            $pdf = FacadePdf::loadView('/livewire/pdf/pdfAbonoAnticipado',['cliente'=>$cliente,'abono'=>$abono]);
+            return $pdf->download("abono_$no_abono.pdf");
+
+        }else{
+            $venta=Venta::find($abono['venta_id'])->toArray();
+            $no_venta=$abono['venta']['no_venta'];
+            $cliente=Cliente::find($abono['venta']['cliente_id'])->toArray();
+            $pdf = FacadePdf::loadView('/livewire/pdf/pdfAbono',['venta' => $venta,'cliente'=>$cliente,'abono'=>$abono]);
+            return $pdf->download("abono_$no_venta.pdf");
+        }
+
+
+
 
         //$user=User::find(1)->toArray();
         //$saldo_anterior=$venta['saldo_credito'];
@@ -340,12 +354,12 @@ public function storeAsignarAbonoAnticipado($value){
             $saldo_actual=$venta['total_venta'];
         }*/
 
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfAbono',['venta' => $venta,'cliente'=>$cliente,'abono'=>$abono]);
+
 
 
 
         //$pdf = Pdf::loadView('pdf.invoice', $data);
-        return $pdf->download("abono_$no_venta.pdf");
+
 
         //return redirect()->route('pdfVentaRapida',$id);
 
