@@ -3,17 +3,9 @@
 namespace App\Livewire;
 
 use App\Models\Cliente;
-use App\Models\Compra;
 use App\Models\EstadoCuenta;
-use App\Models\Inventario;
-use App\Models\Producto;
-use App\Models\Proveedor;
-use App\Models\Tipo;
-use App\Models\User;
 use App\Models\Venta;
-use Carbon\Carbon;
 use Livewire\Component;
-use Illuminate\Support\Str;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 class VentaController extends Component
@@ -113,8 +105,8 @@ class VentaController extends Component
 
 
         //$pdf = Pdf::loadView('pdf.invoice', $data);
-        return $pdf->download("venta_$no_venta.pdf");
-
+        //return $pdf->download("venta_$no_venta.pdf");
+        return $pdf->stream();
         //return redirect()->route('pdfVentaRapida',$id);
 
         //return $pdf->download('venta_pdf.pdf');

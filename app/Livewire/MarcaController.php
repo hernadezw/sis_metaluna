@@ -30,7 +30,6 @@ class MarcaController extends Component
     {
         //dd(Marca::find(1));
         return view('livewire.pages.marca.index');
-
     }
 
     public function create(){
