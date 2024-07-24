@@ -72,7 +72,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if ($venta_reciente)
+                @if ($venta_reciente==null)
                 <tr class="border-b w-full">
                     <td class="px-4 py-2 text-left align-top ">
                         <div>

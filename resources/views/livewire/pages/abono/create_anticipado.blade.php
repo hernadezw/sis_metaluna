@@ -7,7 +7,7 @@
             <x-frk.components.label-input label="No abono"   wire:model.live="no_abono" />
         </div>
         <div class="flex w-full md:w-1/4    ">
-            <x-frk.components.date-picker wire:model="fecha_abono" label="Fecha abono"/>
+            <x-frk.components.date-picker error="fecha_abono" wire:model="fecha_abono" label="Fecha abono"/>
         </div>
     </x-slot>
     <x-slot:body>
