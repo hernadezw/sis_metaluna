@@ -208,7 +208,7 @@ class AbonoController extends Component
         $this->dispatch('pg:eventRefresh-default');
         $this->cancel();
 
-        //return redirect()->route('pdfExportarAbono',$this->no_abono);
+
 }
 
 

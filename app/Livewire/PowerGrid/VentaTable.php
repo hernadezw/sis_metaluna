@@ -59,6 +59,7 @@ final class VentaTable extends PowerGridComponent
             ->add('credito')
             ->add('total_credito')
             ->add('no_credito')
+            ->add('tipo_documento')
             ->add('observaciones_credito')
             ->add('anulado')
             ->add('fecha_anulado_formatted', fn (Venta $model) => Carbon::parse($model->fecha_anulado)->format('d/m/Y'))
@@ -98,6 +99,9 @@ final class VentaTable extends PowerGridComponent
                 ->searchable(),
 
                 Column::make('Saldo venta', 'saldo_venta')
+                ->sortable()
+                ->searchable(),
+                Column::make('Tipo Doc', 'tipo_documento')
                 ->sortable()
                 ->searchable(),
 

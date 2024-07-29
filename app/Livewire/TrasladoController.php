@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\Traslado;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -43,7 +44,7 @@ class TrasladoController extends Component
     public $disabledSucursalOrigen=false, $disabledSucursalDestino=false;
 
     public $id=null;
-    protected $listeners=['edit', 'delete','show'];
+    protected $listeners=['edit', 'delete','show','pdfExportar'];
 
 
     public function render()
@@ -94,11 +95,59 @@ class TrasladoController extends Component
 
 
     }
-/*
-    public function updatedCantidadTransferir($value){
-        $this->validate(['cantidad_transferir'=>"numeric|required|min:1|max:$this->cantidad_existencia"]);
+
+    public function pdfExportar($id){
+        return redirect()->route('pdfExportarTraslado',$id);
     }
-*/
+
+    public function pdfExportarTraslado($id)
+    {
+
+        $traslado=Traslado::with('productos')->find($id)->toArray();
+        $sucursal_origen=Sucursal::find($traslado['sucursal_origen_id'])->toArray();
+        $sucursal_destino=Sucursal::find($traslado['sucursal_destino_id'])->toArray();
+
+
+
+
+        $pdf = FacadePdf::loadView('/livewire/pdf/pdfTraslado',['traslado'=>$traslado,'sucursal_origen'=>$sucursal_origen,'sucursal_destino'=>$sucursal_destino]);
+            //return $pdf->download("abono_$no_abono.pdf");
+
+        return $pdf->stream();
+
+
+
+
+        //$user=User::find(1)->toArray();
+        //$saldo_anterior=$venta['saldo_credito'];
+
+        /*if ($venta['forma_pago']==='CREDI') {
+            $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
+
+            $saldo_actual=$saldo_anterior+$venta['total_venta'];
+        }else{
+            $saldo_anterior=0;
+            $saldo_actual=$venta['total_venta'];
+        }*/
+
+
+
+
+
+        //$pdf = Pdf::loadView('pdf.invoice', $data);
+
+
+        //return redirect()->route('pdfVentaRapida',$id);
+
+        //return $pdf->download('venta_pdf.pdf');
+        //return $pdf->stream();
+        //return $pdf->download('itsolutionstuff.pdf');
+
+    }
+
+
+
+
 
 
 

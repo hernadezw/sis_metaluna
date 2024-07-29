@@ -9,6 +9,8 @@ use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+
 class CompraController extends Component
 {
     public $title='Compra';
@@ -30,7 +32,7 @@ class CompraController extends Component
 
 
 
-    protected $listeners=['edit', 'delete','show'];
+    protected $listeners=['edit', 'delete','show','pdfExportar'];
 
     public function render()
     {
@@ -81,6 +83,37 @@ class CompraController extends Component
         unset($this->productosDetalle[$i]);
         unset($this->cantidadesDetalle[$i]);
     }
+
+
+
+
+
+    public function pdfExportar($id){
+        return redirect()->route('pdfExportarCompra',$id);
+    }
+
+    public function pdfExportarCompra($id)
+    {
+
+        //$traslado=Traslado::with('productos')->find($id)->toArray();
+        $compra=Compra::with('productos')->find($id)->toArray();
+
+
+
+
+
+        $pdf = FacadePdf::loadView('/livewire/pdf/pdfCompra ',['compra'=>$compra]);
+            //return $pdf->download("abono_$no_abono.pdf");
+
+        return $pdf->stream();
+
+
+    }
+
+
+
+
+
 
     public function store(){
         $this->validate([

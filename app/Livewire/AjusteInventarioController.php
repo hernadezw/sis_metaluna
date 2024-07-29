@@ -4,12 +4,11 @@ namespace App\Livewire;
 
 use App\Constantes\DataSistema;
 use App\Models\AjusteInventario;
-use App\Models\Forma;
 use App\Models\Producto;
-use App\Models\ProductoSucursal;
 use App\Models\Sucursal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 use Livewire\Component;
 
 class AjusteInventarioController extends Component
@@ -35,7 +34,7 @@ class AjusteInventarioController extends Component
 
     ////////////////////
 
-    protected $listeners=['edit', 'delete','show'];
+    protected $listeners=['edit', 'delete','show','pdfExportar'];
 
     public function render()
     {
@@ -189,6 +188,53 @@ public function destroy($rowId)
         $this->reset(['producto_id','tipo_ajuste','descripcion','cantidad_traslado']);
         ////////////////////
     }
+
+    public function pdfExportar($id){
+
+
+        return redirect()->route('pdfExportarAjusteInventario',$id);
+
+    }
+
+    public function pdfExportarAjusteInventario($id)
+    {
+
+
+        $ajuste_inventario=AjusteInventario::find($id)->toArray();
+
+
+        $producto = Producto::find($ajuste_inventario['producto_id'])->toArray();
+
+        $sucursal = Sucursal::find($ajuste_inventario['sucursal_id'])->toArray();
+
+
+
+
+
+
+
+    //$pdf = Pdf::loadView('pdf.invoice', $data);
+
+
+
+        $pdf = FacadePdf::loadView('/livewire/pdf/pdfAjusteInventario',['ajuste_inventario' => $ajuste_inventario,'producto'=>$producto,'sucursal'=>$sucursal]);
+
+        //$pdf = Pdf::loadView('pdf.invoice', $data);
+       // return $pdf->download("venta_$no_venta.pdf");
+
+        //return redirect()->route('pdfVentaRapida',$id);
+
+        //return $pdf->download('venta_pdf.pdf');
+        //return $pdf->download("ajuste_inventario.pdf");
+            return $pdf->stream();
+        //return $pdf->download('itsolutionstuff.pdf');
+
+    }
+
+
+
+
+
 
 
 }

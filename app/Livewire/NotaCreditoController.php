@@ -47,7 +47,7 @@ class NotaCreditoController extends Component
         'fecha_nota_credito'=>'required'
     ];
 
-    protected $listeners=['pdfExportar','delete'];
+    protected $listeners=['edit', 'delete','show','pdfExportar'];
 
     public function render()
     {
@@ -179,7 +179,7 @@ class NotaCreditoController extends Component
     };
     $this->dispatch('pg:eventRefresh-default');
     $this->cancel();
-    return redirect()->route('pdfExportarNotaCredito',$this->no_nota_credito);
+
 }
 
 public function pdfExportar($id){
@@ -187,6 +187,9 @@ public function pdfExportar($id){
     return redirect()->route('pdfExportarNotaCredito',$id);
 
 }
+
+
+
 
 public function pdfExportarNotaCredito($id)
 {
@@ -220,14 +223,11 @@ public function pdfExportarNotaCredito($id)
 
 
 
-    //$pdf = Pdf::loadView('pdf.invoice', $data);
-    return $pdf->download("nota_credito_$no_venta.pdf");
+   // return $pdf->download("nota_credito_$no_venta.pdf");
 
-    //return redirect()->route('pdfVentaRapida',$id);
 
-    //return $pdf->download('venta_pdf.pdf');
-    //return $pdf->stream();
-    //return $pdf->download('itsolutionstuff.pdf');
+    return $pdf->stream();
+
 
 }
 

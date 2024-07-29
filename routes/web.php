@@ -32,6 +32,7 @@ use App\Livewire\UsuarioController;
 use App\Livewire\VehiculoController;
 use App\Livewire\VentaController;
 use App\Livewire\VentaRapidaController;
+use App\Models\AjusteInventario;
 
 Route::view('/', 'welcome');
 
@@ -145,6 +146,17 @@ Route::view('/', 'welcome');
 
         Route::get('pdf-exportar-estado-cuenta-venta}', [EstadoCuentaVentaController::class, 'pdfExportarEstadoCuentaVenta'])->name('pdfExportarEstadoCuentaVenta');
         Route::get('pdf-exportar-estado-cuenta-venta/{id?}}', [EstadoCuentaVentaController::class, 'pdfExportarEstadoCuentaVenta'])->name('pdfExportarEstadoCuentaVenta');
+
+        Route::get('pdf-exportar-ajuste-inventario/{id?}}', [AjusteInventarioController::class, 'pdfExportarAjusteInventario'])->name('pdfExportarAjusteInventario');
+
+        Route::get('pdf-exportar-traslado/{id?}}', [TrasladoController::class, 'pdfExportarTraslado'])->name('pdfExportarTraslado');
+
+        Route::get('pdf-exportar-compra/{id?}}', [CompraController::class, 'pdfExportarCompra'])->name('pdfExportarCompra');
+
+        Route::get('pdf-exportar-credito/{id?}}', [CreditoController::class, 'pdfExportarCredito'])->name('pdfExportarCredito');
+
+
+
 
 
 require __DIR__.'/auth.php';

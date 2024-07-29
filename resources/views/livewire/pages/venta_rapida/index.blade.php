@@ -5,8 +5,15 @@
     <div class="flex-wrap w-full">
         <div class="flex flex-wrap">
             <div class="flex w-full ">
-                <div class="flex w-full md:w-2/12">
+                <div class="flex w-full flex-wrap md:w-2/12">
                     <x-frk.components.title label="{{$title}}" />
+                    <div class="flex w-full ">
+                        <x-frk.components.select label="Tipo Documento" error="id_tipo_documento" :disabled="$disabled" wire:model.live="id_tipo_documento">
+                            @foreach ($this->tipo_documento as $data)
+                            <option value="{{ $data['valor'] }}" wire:key="tipo-{{ $data['id'] }}">{{ $data['nombre'] }}</option>
+                            @endforeach
+                        </x-forms.select>
+                    </div>
                 </div>
                 <div class="flex w-full md:w-2/12">
                     <x-frk.components.date-picker :disabled="$disabledInput" erase="false" wire:model="fecha_venta" label="Fecha Venta"/>
@@ -21,6 +28,7 @@
                         @endforeach
                     </x-forms.select>
                 </div>
+
                 <div class="flex w-full md:w-1/12">
 
                 </div>

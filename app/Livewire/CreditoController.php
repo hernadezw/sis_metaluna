@@ -2,8 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Models\Cliente;
 use App\Models\Credito;
 use Livewire\Component;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 class CreditoController extends Component
 {
@@ -28,7 +30,7 @@ class CreditoController extends Component
         'alias' => 'required',
     ];
 
-    protected $listeners=['edit', 'delete','show'];
+    protected $listeners=['edit', 'delete','show','pdfExportar'];
 
     public function render()
     {
@@ -69,4 +71,25 @@ class CreditoController extends Component
         $this->reset(['isCreate','isEdit','isShow','isDelete','disabled','created_at','updated_at']);
         $this->reset(['no_credito','venta_id','fecha_credito','total_credito','cliente_id','nombres_cliente','apellidos_cliente','observaciones','created_at','updated_at']);
     }
+
+    public function pdfExportar($id){
+        return redirect()->route('pdfExportarCredito',$id);
+    }
+
+    public function pdfExportarCredito($id)
+    {
+
+        //$traslado=Traslado::with('productos')->find($id)->toArray();
+        $credito=Credito::find($id)->toArray();
+        $cliente=Cliente::find($credito['cliente_id'])->toArray();
+
+
+        $pdf = FacadePdf::loadView('/livewire/pdf/pdfCredito ',['credito'=>$credito,'cliente'=>$cliente]);
+            //return $pdf->download("abono_$no_abono.pdf");
+
+        return $pdf->stream();
+
+
+    }
+
 }

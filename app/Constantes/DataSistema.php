@@ -8,6 +8,11 @@ namespace App\Constantes;
 class DataSistema
 {
 
+    public static $tipo_documento = [
+        ['id'=>'1','nombre'=>'Cotizacion','valor'=>'COTIZAC'],
+        ['id'=>'2','nombre'=>'Venta','valor'=>'VENTA'],
+    ];
+
 public static $envio = [
     ['id'=>'1','nombre'=>'Envio','valor'=>'1'],
     ['id'=>'2','nombre'=>'Sin Envio','valor'=>'0'],

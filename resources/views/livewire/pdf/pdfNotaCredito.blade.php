@@ -79,7 +79,7 @@
 <p class="s3" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Código:</p>
 </td>
 <td style="width:71pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-<p class="s4" style="text-indent: 0pt;text-align: center;">{{$cliente['codigo']}}</p>
+<p class="s4" style="text-indent: 0pt;text-align: center;">{{$cliente['codigo_mayorista']}}</p>
 </td>
 <td style="width:63pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
 <p class="s3" style="padding-left: 10pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Telefono:</p>

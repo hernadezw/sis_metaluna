@@ -14,6 +14,7 @@ class Venta extends Model
         'id',
         'cliente_id',
 
+        'tipo_documento',
         'no_venta',
         'fecha_venta',
         'hora_venta',

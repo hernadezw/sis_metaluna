@@ -81,7 +81,7 @@ class VentaRapidaController extends Component
 
 
     //variables
-    public $id_forma_pago=null, $id_envio=null, $id_tipo=null, $id_marca=null, $id_material=null;
+    public $id_forma_pago=null, $id_envio=null, $id_tipo=null, $id_marca=null, $id_material=null, $id_tipo_documento="VENTA";
 
 
     public $disabledInputPasswordAdmin=null;
@@ -95,6 +95,8 @@ class VentaRapidaController extends Component
     public $autorizacion_limite_credito=false;
 
     protected $listeners=['edit', 'delete','show'];
+
+    public $tipo_documento=null;
 
     public $abono_anticipado=0;
 //////////////liberar o desbloquear precio////
@@ -116,6 +118,7 @@ public $email_edit=null, $codigo_edit=null;
 
         $this->temp = Venta::all();
         $this->forma_pagos=DataSistema::$forma_pago;
+        $this->tipo_documento=DataSistema::$tipo_documento;
         $data=Venta::latest()->first();
 
 
@@ -137,6 +140,15 @@ public $email_edit=null, $codigo_edit=null;
 
     public function searchCliente(){
         $this->isSearchCliente=true;
+    }
+
+    public function updatedIdTipoDocumento($value){
+        if($value!="VENTA"){
+            $this->title="COTIZACION";
+        }else{
+            $this->title="VENTA";
+        }
+
     }
 
 
@@ -504,120 +516,127 @@ public $email_edit=null, $codigo_edit=null;
 
 
     public function store(){
-        $this->validate(['id_forma_pago'=>'required','nombres_cliente'=>'required']);
-        if($this->nit!=null){
-            $cliente=Cliente::find($this->cliente_id);
-            $this->limite_credito_temp=$cliente->limite_credito;
-        }
-        $data=null;
 
-        $id=0;
-        $credito=0;
-        $saldo_venta=0;
-
-        if ($this->productosDetalle!=[]) {
-            if ($this->id_forma_pago==="CREDI") {
-                if(EstadoCuenta::where('cliente_id',$this->cliente_id)->exists()){
-                    $data_estado_cuenta=EstadoCuenta::where('cliente_id',$this->cliente_id)->first();
-
-                    $cantidad_credito=($data_estado_cuenta->total_credito-$data_estado_cuenta->total_abono)+$this->total_venta;
-                }else{
-                    $cantidad_credito=$this->total_venta;
+                $this->validate(['id_forma_pago'=>'required','nombres_cliente'=>'required']);
+                if($this->nit!=null){
+                    $cliente=Cliente::find($this->cliente_id);
+                    $this->limite_credito_temp=$cliente->limite_credito;
                 }
-                if($cantidad_credito>=$this->limite_credito_temp && !$this->autorizacion_limite_credito){
-                    $this->addError('saldo_credito', 'Supera el credito asignado');
-                }else{
-                    $credito=$this->total_venta;
-                    $saldo_venta=$this->total_venta;
-                    $data=Venta::create(
-                        [
-                            'cliente_id'=>$this->cliente_id,
-                            'no_venta'=>$this->no_venta,
-                            'fecha_venta'=>$this->fecha_venta,
-                            'hora_venta'=>Carbon::now()->toTimeString(),
-                            'total_venta'=>$this->total_venta,
-                            'observaciones_venta'=>$this->observaciones_venta,
-                            'saldo_credito'=>$this->saldo_credito,
+                $data=null;
 
-                            'sucursal_id'=>Auth::user()->sucursal_id,
-                            'forma_pago'=>$this->id_forma_pago,
-
-                            'credito'=>true,
-                            'no_credito'=>$this->no_credito,
-                            'total_credito'=>$credito,
-                            'observaciones_credito'=>$this->observaciones_credito,
-                            'saldo_venta'=>$saldo_venta
-                        ]);
-
-                    $id=$data->id;
-                foreach ($this->productosDetalle as $key => $value) {
-                    $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
-                }
-                $this->alert('success', "Venta Realizada: $this->no_venta ", [
-                    'position' => 'center',
-                    'timer' => '3000',
-                    'toast' => true,
-                    'showConfirmButton' => false,
-                    'onConfirmed' => '',
-                    'timerProgressBar' => true,
-                   ]);
-                   return redirect()->route('pdfVentaRapida',$id);
-                }
-            }
-
-            if ($this->id_forma_pago==="EFECT") {
+                $id=0;
+                $credito=0;
                 $saldo_venta=0;
-                $data=Venta::create(
-                    [
-                        'cliente_id'=>$this->cliente_id,
 
-                        'no_venta'=>$this->no_venta,
-                        'fecha_venta'=>$this->fecha_venta,
-                        'hora_venta'=>Carbon::now()->toTimeString(),
-                        'total_venta'=>$this->total_venta,
-                        'observaciones_venta'=>$this->observaciones_venta,
-                        'saldo_credito'=>$this->saldo_credito,
-
-                        'sucursal_id'=>Auth::user()->sucursal_id,
-                        'forma_pago'=>$this->id_forma_pago,
-
-                        'efectivo'=>true,
-                        'cancelado'=>true,
-                        'fecha_cancelado'=>$this->fecha_venta,
-                        'saldo_venta'=>$saldo_venta,
-
-                        'credito'=>false,
-                        'no_credito'=>'0',
-                        'total_credito'=>'0',
-                        'observaciones_credito'=>'',
-                    ]);
+                if ($this->productosDetalle!=[]) {
 
 
-                    $id=$data->id;
-                    foreach ($this->productosDetalle as $key => $value) {
-                        $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
+                    if ($this->id_forma_pago==="CREDI" ) {
+                        if(EstadoCuenta::where('cliente_id',$this->cliente_id)->exists()){
+                            $data_estado_cuenta=EstadoCuenta::where('cliente_id',$this->cliente_id)->first();
+
+                            $cantidad_credito=($data_estado_cuenta->total_credito-$data_estado_cuenta->total_abono)+$this->total_venta;
+                        }else{
+                            $cantidad_credito=$this->total_venta;
+                        }
+                        if($cantidad_credito>=$this->limite_credito_temp && !$this->autorizacion_limite_credito){
+                            $this->addError('saldo_credito', 'Supera el credito asignado');
+                        }else{
+                            $credito=$this->total_venta;
+                            $saldo_venta=$this->total_venta;
+                            $data=Venta::create(
+                                [
+                                    'cliente_id'=>$this->cliente_id,
+
+                                    'tipo_documento'=>$this->id_tipo_documento,
+                                    'no_venta'=>$this->no_venta,
+                                    'fecha_venta'=>$this->fecha_venta,
+                                    'hora_venta'=>Carbon::now()->toTimeString(),
+                                    'total_venta'=>$this->total_venta,
+                                    'observaciones_venta'=>$this->observaciones_venta,
+                                    'saldo_credito'=>$this->saldo_credito,
+
+                                    'sucursal_id'=>Auth::user()->sucursal_id,
+                                    'forma_pago'=>$this->id_forma_pago,
+
+                                    'credito'=>true,
+                                    'no_credito'=>$this->no_credito,
+                                    'total_credito'=>$credito,
+                                    'observaciones_credito'=>$this->observaciones_credito,
+                                    'saldo_venta'=>$saldo_venta
+                                ]);
+
+                            $id=$data->id;
+                        foreach ($this->productosDetalle as $key => $value) {
+                            $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
+                        }
+                        $this->alert('success', "Venta Realizada: $this->no_venta ", [
+                            'position' => 'center',
+                            'timer' => '3000',
+                            'toast' => true,
+                            'showConfirmButton' => false,
+                            'onConfirmed' => '',
+                            'timerProgressBar' => true,
+                           ]);
+                           return redirect()->route('pdfVentaRapida',$id);
+                        }
                     }
-                    $this->alert('success', "Venta Realizada: $this->no_venta ", [
+
+                    if ($this->id_forma_pago==="EFECT") {
+                        $saldo_venta=0;
+                        $data=Venta::create(
+                            [
+                                'cliente_id'=>$this->cliente_id,
+
+                                'tipo_documento'=>$this->id_tipo_documento,
+                                'no_venta'=>$this->no_venta,
+                                'fecha_venta'=>$this->fecha_venta,
+                                'hora_venta'=>Carbon::now()->toTimeString(),
+                                'total_venta'=>$this->total_venta,
+                                'observaciones_venta'=>$this->observaciones_venta,
+                                'saldo_credito'=>$this->saldo_credito,
+
+                                'sucursal_id'=>Auth::user()->sucursal_id,
+                                'forma_pago'=>$this->id_forma_pago,
+
+                                'efectivo'=>true,
+                                'cancelado'=>true,
+                                'fecha_cancelado'=>$this->fecha_venta,
+                                'saldo_venta'=>$saldo_venta,
+
+                                'credito'=>false,
+                                'no_credito'=>'0',
+                                'total_credito'=>'0',
+                                'observaciones_credito'=>'',
+                            ]);
+
+
+                            $id=$data->id;
+                            foreach ($this->productosDetalle as $key => $value) {
+                                $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
+                            }
+                            $this->alert('success', "Venta Realizada: $this->no_venta ", [
+                                'position' => 'center',
+                                'timer' => '3000',
+                                'toast' => true,
+                                'showConfirmButton' => false,
+                                'onConfirmed' => '',
+                                'timerProgressBar' => true,
+                               ]);
+                               return redirect()->route('pdfVentaRapida',$id);
+                        }
+                }else {
+                    $this->alert('error', 'Error', [
                         'position' => 'center',
-                        'timer' => '3000',
+                        'timer' => '2000',
                         'toast' => true,
                         'showConfirmButton' => false,
                         'onConfirmed' => '',
                         'timerProgressBar' => true,
-                       ]);
-                       return redirect()->route('pdfVentaRapida',$id);
+                        'text' => 'Debe agregar producto',
+                    ]);
                 }
-        }else {
-            $this->alert('error', 'Error', [
-                'position' => 'center',
-                'timer' => '2000',
-                'toast' => true,
-                'showConfirmButton' => false,
-                'onConfirmed' => '',
-                'timerProgressBar' => true,
-                'text' => 'Debe agregar producto',
-            ]);
-        }
+
     }
 
 

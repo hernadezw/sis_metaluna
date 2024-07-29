@@ -108,7 +108,15 @@ final class AjusteInventarioTablee extends PowerGridComponent
             ->slot('Borrar')
             ->id()
             ->class('bg-red-500 hover:bg-red-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-            ->dispatch('delete', ['rowId' => $row->id])
+            ->dispatch('delete', ['rowId' => $row->id]),
+
+            Button::add('exportar')
+            ->slot('Exportar')
+            ->id()
+            ->class('bg-green-500 hover:bg-green-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+            ->dispatch('pdfExportar',['id'  => $row->id]),
+
+
         ];
     }
 

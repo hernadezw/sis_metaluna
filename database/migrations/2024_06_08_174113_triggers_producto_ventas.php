@@ -25,37 +25,19 @@ return new class extends Migration
             DECLARE cantidad_temp INT;
             DECLARE total INT;
             DECLARE exist INT;
+            DECLARE tipo_doc VARCHAR(10);
 
+
+
+            SET tipo_doc = (SELECT tipo_documento FROM ventas WHERE id=NEW.venta_id);
+                 IF(tipo_doc="VENTA") THEN
                 SET total=NEW.cantidad;
                 SET exist = (SELECT existencia FROM productos WHERE id=NEW.producto_id);
                 UPDATE productos SET existencia = (exist-NEW.cantidad) WHERE id=NEW.producto_id;
 
-            END
 
-    /*
-        while total > 0 do
-                SET sucursal_origen =(SELECT id FROM sucursals WHERE  prioridad=prioridad_contador);
-                IF (SELECT EXISTS (SELECT * FROM producto_sucursal WHERE  producto_id=NEW.producto_id AND sucursal_id=sucursal_origen)) THEN
-                    SET cantidad_temp =(SELECT cantidad FROM producto_sucursal WHERE  producto_id=NEW.producto_id AND sucursal_id=sucursal_origen);
-                    IF (TOTAL>cantidad_temp) THEN
-                        INSERT INTO salidas (venta_id,producto_venta_id,sucursal_id,cantidad) VALUES (NEW.venta_id, NEW.producto_id,sucursal_origen,cantidad_temp);
-                        UPDATE producto_sucursal SET cantidad = 0 WHERE producto_id = NEW.producto_id AND sucursal_id = sucursal_id;
-                        SET TOTAL=TOTAL-cantidad_temp;
-                        ELSE IF (TOTAL<cantidad_temp) THEN
-                            INSERT INTO salidas (venta_id,producto_venta_id,sucursal_id,cantidad) VALUES (NEW.venta_id, NEW.producto_id,sucursal_origen,total);
-                            UPDATE producto_sucursal SET cantidad = (cantidad_temp-TOTAL) WHERE producto_id = NEW.producto_id AND sucursal_id = sucursal_id;
-                            SET TOTAL=0;
-                            ELSE IF (TOTAL=cantidad_temp) THEN
-                                INSERT INTO salidas (venta_id,producto_venta_id,sucursal_id,cantidad) VALUES (NEW.venta_id, NEW.producto_id,sucursal_origen,cantidad_temp);
-                                UPDATE producto_sucursal SET cantidad = (cantidad_temp-TOTAL) WHERE producto_id = NEW.producto_id AND sucursal_id = sucursal_id;
-                                SET TOTAL=0;
-                            END IF;
-                ELSE
-                    SET prioridad_contador=prioridad_contador+1;
                 END IF;
-        end while ;
-    */
-
+END
         ');
 
 
@@ -67,21 +49,27 @@ DB::unprepared('CREATE TRIGGER add_venta_inventario AFTER INSERT ON producto_ven
 
     DECLARE exist INT;
     DECLARE sucur_id INT;
+     DECLARE tipo_doc VARCHAR(10);
     DECLARE invent_id INT DEFAULT 0;
     DECLARE invent_cantidad INT DEFAULT 0;
 
+
+
     SET sucur_id = (SELECT sucursal_id FROM ventas WHERE id=NEW.venta_id);
+    SET tipo_doc = (SELECT tipo_documento FROM ventas WHERE id=NEW.venta_id);
 
 
 
-    IF (SELECT EXISTS (SELECT * FROM producto_sucursal WHERE producto_id = NEW.producto_id AND sucursal_id = sucur_id)) THEN
+    IF(tipo_doc="VENTA") THEN
+        IF (SELECT EXISTS (SELECT * FROM producto_sucursal WHERE producto_id = NEW.producto_id AND sucursal_id = sucur_id)) THEN
 
-        SET invent_cantidad = (SELECT cantidad from producto_sucursal where producto_id = NEW.producto_id and sucursal_id = sucur_id);
-        UPDATE producto_sucursal SET cantidad = (invent_cantidad-NEW.cantidad) WHERE producto_id = NEW.producto_id AND sucursal_id = sucur_id;
+            SET invent_cantidad = (SELECT cantidad from producto_sucursal where producto_id = NEW.producto_id and sucursal_id = sucur_id);
+            UPDATE producto_sucursal SET cantidad = (invent_cantidad-NEW.cantidad) WHERE producto_id = NEW.producto_id AND sucursal_id = sucur_id;
 
-    ELSE
+        ELSE
 
-        INSERT INTO producto_sucursal (producto_id, sucursal_id, cantidad) VALUES (NEW.producto_id, sucur_id,NEW.cantidad);
+            INSERT INTO producto_sucursal (producto_id, sucursal_id, cantidad) VALUES (NEW.producto_id, sucur_id,NEW.cantidad);
+        END IF;
     END IF;
 
 

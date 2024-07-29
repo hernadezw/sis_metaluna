@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cliente_id')->nullable(true);
             $table->foreign('cliente_id')->references('id')->on('clientes');
 
+            $table->string('tipo_documento');
             $table->string('no_venta');
             $table->date('fecha_venta');
             $table->time('hora_venta');
