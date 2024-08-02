@@ -10,6 +10,7 @@ use App\Models\Ruta;
 use App\Models\User;
 use App\Models\Vehiculo;
 use App\Models\Venta;
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -31,7 +32,7 @@ class EnvioController extends Component
 
 
     public $fecha;
-    public $no_envio=0;
+    public $no_envio=1;
 
     public $usuarios=[];
 
@@ -65,6 +66,7 @@ class EnvioController extends Component
     public $envio_fecha=null;
 
     public $ruta_id=null;
+    public $id=0;
 
     public $proceso_id=null;
     public $proceso_nombre=null;
@@ -97,7 +99,7 @@ public $array = array(
 
 
 
-    protected $listeners=['edit', 'delete','show','finalizar'];
+    protected $listeners=['edit', 'delete','show','finalizar','pdfExportar'];
 
     public function render()
     {
@@ -113,20 +115,22 @@ public $array = array(
         $this->disabled_estado_obserbacion=false;
         $this->disabled_estado_fecha=true;
 
-        $this->estados=ConstantesDataSistema::$estados;
-        $this->procesos=DataSistema::$procesos;
-
         $this->proceso_id=1;
         $this->estado_id=3;
 
-        $this->id_last=Envio::latest('id')->first();
+        $data=Envio::latest()->first();
 
-        if ( $this->id_last===null) {
-            $this->no_envio=0;
+
+        if ( $data) {
+            $this->id=$data->id+1;
+            $this->envio_no=$this->id;
+        }else{
+            $this->id=1;
+            $this->envio_no=$this->id;
         }
 
         $this->usuarios=User::all();
-        $this->ventas=Venta::where('envio',1)->where('en_ruta',false)->get();
+        $this->ventas=Venta::where('envio','=','ENVIO')->where('estado_envio','=','SIN ASIGNAR')->get();
         $this->rutas=Ruta::all();
         $this->vehiculos=Vehiculo::all();
         $this->isCreate=true;
@@ -175,12 +179,38 @@ public $array = array(
         }
     }
 
+    public function pdfExportar($id){
+        return redirect()->route('pdfExportarEnvio',$id);
+    }
+
+    public function pdfExportarEnvio($id)
+    {
+        $ventas=[];
+        $envio=Envio::with('users')->with('ventas')->with('vehiculos')->with('ruta')->find($id)->toArray();
+
+
+
+        foreach ($envio['ventas'] as $key => $value) {
+
+            $data=Venta::with('cliente')->find($value['id'])->toArray();
+            array_push($ventas ,$data);
+        }
+
+
+
+        $pdf = FacadePdf::loadView('/livewire/pdf/pdfEnvio ',['envio'=>$envio,'ventas'=>$ventas]);
+        return $pdf->stream();
+
+    }
+
+
     public function store(){
     $data=Envio::create(
         [
-        'envio_no'=>$this->no_envio,
+        'envio_no'=>$this->envio_no,
         'envio_fecha'=>$this->envio_fecha,
         'ruta_id'=>$this->ruta_id,
+        'estado_envio'=>"PROCESO",
         'observaciones_inicio_envio'=>$this->observaciones_inicio_envio,
         'visible'=>'1',
         'finalizado'=>'0',
@@ -194,15 +224,13 @@ public $array = array(
         foreach ($this->idDetalle as $key => $value) {
             $data=Venta::find($value);
             $data->update([
-                'en_ruta'=>True
+                'estado_envio'=>"PROCESO"
             ]);
-
-
         }
 
     ////////////////////
         $this->dispatch('pg:eventRefresh-default');
-        $this->cancel();
+        $this->reset();
     }
 
     public function finalizar($id){
@@ -210,13 +238,10 @@ public $array = array(
         $this->isFinalizar=true;
         $this->disabled=true;
         $this->disabled_observaciones_inicio_envio=true;
-        $this->envio=Envio::where('id',$id['id'])->with('ventas')->with('vehiculos')->with('users')->first();
+        $this->rutas=Ruta::all();
+        $this->envio=Envio::find($id)->with('ventas')->with('vehiculos')->with('users')->first();
 
-        //$this->estados=DataSistema::$estados;
-        //$this->usuarios=User::all();
-        //$this->ventas=Venta::where('envio',1)->get();
-        //$this->rutas=Ruta::all();
-        //$this->vehiculos=Vehiculo::all();
+        $this->disabled_observaciones_inicio_envio=true;
 
         foreach ($this->envio->ventas  as $key => $value) {
             $dataa=array("{$value['id']}"=>true);
@@ -243,8 +268,9 @@ public $array = array(
             ////////////////////
             $data = Envio::find($this->envio_id);
             $data->update([
-                'observaciones_final_envio'=>$this->observaciones_final_envio,
-                'finalizado'=>True
+                'observaciones_fin_envio'=>$this->observaciones_final_envio,
+                'estado_envio'=>"FINALIZADO",
+                'finalizado'=>true
             ]);
 
 
@@ -253,7 +279,7 @@ public $array = array(
 
                 $data = Venta::find($value['id']);
                 $data->update([
-                    'entregado'=>True
+                    'estado_envio'=>"FINALIZADO"
                 ]);
 
 

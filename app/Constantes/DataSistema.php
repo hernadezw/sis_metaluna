@@ -14,8 +14,8 @@ class DataSistema
     ];
 
 public static $envio = [
-    ['id'=>'1','nombre'=>'Envio','valor'=>'1'],
-    ['id'=>'2','nombre'=>'Sin Envio','valor'=>'0'],
+    ['id'=>'1','nombre'=>'Envio','valor'=>'ENVIO'],
+    ['id'=>'2','nombre'=>'Sin Envio','valor'=>'SINENVIO'],
 ];
 
 public static $tipo_ajuste_invetario = [
@@ -23,23 +23,15 @@ public static $tipo_ajuste_invetario = [
     ['nombre'=>'Egreso','valor'=>'egreso'],
 ];
 
-public static $estados = [
-    ['id'=>'1','super_id'=>'1','nombre'=>'Aprobado','alias'=>'COM'],
-    ['id'=>'2','super_id'=>'1','nombre'=>'Rechazado','alias'=>'REC'],
-    ['id'=>'3','super_id'=>'1','nombre'=>'Incompleto','alias'=>'INC'],
+public static $estados_envio = [
+    ['id'=>'1','nombre'=>'No Aplica','valor'=>'NO/APLICA'],
+    ['id'=>'2','nombre'=>'Sin asignar','valor'=>'SIN ASIGNAR'],
+    ['id'=>'3','nombre'=>'En proceso','valor'=>'PROCESO'],
+    ['id'=>'4','nombre'=>'Finalizado','valor'=>'FINALIZADO'],
+    ['id'=>'5','nombre'=>'Rechazado','valor'=>'RECHAZADO'],
 
-    ['id'=>'4','super_id'=>'2','nombre'=>'En proceso','alias'=>'PRO'],
-    ['id'=>'5','super_id'=>'2','nombre'=>'Pospuesto','alias'=>'POS'],
-
-    ['id'=>'6','super_id'=>'3','nombre'=>'Aprobado','alias'=>'APR'],
-    ['id'=>'7','super_id'=>'3','nombre'=>'Rechazado','alias'=>'REC'],
 ];
 
-public static $procesos = [
-    ['id'=>'1','nombre'=>'Iniciado','alias'=>'INI'],
-    ['id'=>'2','nombre'=>'Ejecucion','alias'=>'EJE'],
-    ['id'=>'3','nombre'=>'Finalizado','alias'=>'FIN'],
-];
 
 
 public static $forma_pago = [

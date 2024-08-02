@@ -14,7 +14,6 @@ class Venta extends Model
         'id',
         'cliente_id',
 
-        'tipo_documento',
         'no_venta',
         'fecha_venta',
         'hora_venta',
@@ -24,6 +23,9 @@ class Venta extends Model
 
         'forma_pago',
         'efectivo',
+
+        'envio',
+        'estado_envio',
 
         'credito',
         'total_credito',
@@ -78,6 +80,11 @@ class Venta extends Model
 
     public function Credito(){
         return $this->belongsTo(Credito::class);
+    }
+
+    public function Departamentos(){
+        return $this->belongsToMany(Departamento::class)
+        ->withPivot('observaciones');
     }
 
 /*

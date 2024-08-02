@@ -305,8 +305,6 @@ class ClienteController extends Component
 
     public function updatedDireccionDepartamento($value){
         $codigo=Departamento::find($value);
-        //$this->codigo_temp_dep=$codigo->codigo;
-        //$this->codigo_internotemp=$this->codigo_internotemp_dep;
         $this->municipios = Municipio::where('departamento_id',$value)->get();
         $this->last_dep=true;
         $this->reset('municipio_id');

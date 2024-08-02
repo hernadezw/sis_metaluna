@@ -15,32 +15,6 @@ return new class extends Migration
     public function up()
     {
 
-        DB::unprepared('DROP TRIGGER IF EXISTS `add_producto_venta`');
-        DB::unprepared('CREATE TRIGGER add_producto_venta AFTER INSERT ON producto_venta
-            FOR EACH ROW
-            BEGIN
-            DECLARE prioridad_contador INT DEFAULT 1;
-            DECLARE sucursal_end BOOLEAN DEFAULT FALSE;
-            DECLARE sucursal_origen INT DEFAULT 1;
-            DECLARE cantidad_temp INT;
-            DECLARE total INT;
-            DECLARE exist INT;
-            DECLARE tipo_doc VARCHAR(10);
-
-
-
-            SET tipo_doc = (SELECT tipo_documento FROM ventas WHERE id=NEW.venta_id);
-                 IF(tipo_doc="VENTA") THEN
-                SET total=NEW.cantidad;
-                SET exist = (SELECT existencia FROM productos WHERE id=NEW.producto_id);
-                UPDATE productos SET existencia = (exist-NEW.cantidad) WHERE id=NEW.producto_id;
-
-
-                END IF;
-END
-        ');
-
-
 
 DB::unprepared('DROP TRIGGER IF EXISTS `add_venta_inventario`');
 DB::unprepared('CREATE TRIGGER add_venta_inventario AFTER INSERT ON producto_venta
@@ -54,13 +28,24 @@ DB::unprepared('CREATE TRIGGER add_venta_inventario AFTER INSERT ON producto_ven
     DECLARE invent_cantidad INT DEFAULT 0;
 
 
+                DECLARE prioridad_contador INT DEFAULT 1;
+            DECLARE sucursal_end BOOLEAN DEFAULT FALSE;
+            DECLARE sucursal_origen INT DEFAULT 1;
+            DECLARE cantidad_temp INT;
+            DECLARE total INT;
 
-    SET sucur_id = (SELECT sucursal_id FROM ventas WHERE id=NEW.venta_id);
-    SET tipo_doc = (SELECT tipo_documento FROM ventas WHERE id=NEW.venta_id);
+
+
+            SET sucur_id = (SELECT sucursal_id FROM ventas WHERE id=NEW.venta_id);
 
 
 
-    IF(tipo_doc="VENTA") THEN
+                SET total=NEW.cantidad;
+                SET exist = (SELECT existencia FROM productos WHERE id=NEW.producto_id);
+                UPDATE productos SET existencia = (exist-NEW.cantidad) WHERE id=NEW.producto_id;
+
+
+
         IF (SELECT EXISTS (SELECT * FROM producto_sucursal WHERE producto_id = NEW.producto_id AND sucursal_id = sucur_id)) THEN
 
             SET invent_cantidad = (SELECT cantidad from producto_sucursal where producto_id = NEW.producto_id and sucursal_id = sucur_id);
@@ -70,7 +55,7 @@ DB::unprepared('CREATE TRIGGER add_venta_inventario AFTER INSERT ON producto_ven
 
             INSERT INTO producto_sucursal (producto_id, sucursal_id, cantidad) VALUES (NEW.producto_id, sucur_id,NEW.cantidad);
         END IF;
-    END IF;
+
 
 
 END

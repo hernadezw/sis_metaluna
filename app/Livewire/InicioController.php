@@ -13,11 +13,13 @@ use Livewire\Component;
 
 class InicioController extends Component
 {
-    public $clientes = 0,$clientes_credito=0, $creditos=0,$creditos_cantidad=0, $ventas_del_dia=0, $productos_baja_existencia_canitdad=0,   $envios=0,$ventas=0, $productos=0,$productos_baja_existencia=0, $venta_reciente=0,$credito_dia=0,$importe_venta_dia=0,$ventas_dia=0,$ventas_actuales=0;
-
+    public $clientes = 0,$clientes_credito=0, $creditos=0,$creditos_cantidad=0, $ventas_del_dia=0, $productos_baja_existencia_canitdad=0,$ventas=0, $productos=0,$productos_baja_existencia=0, $venta_reciente=0,$credito_dia=0,$importe_venta_dia=0,$ventas_dia=0,$ventas_actuales=0;
+    public $envios_pendiente_finalizar=0,$envios=[];
     public function render()
     {
-        $this->envios=Envio::all()->count();
+        $this->envios_pendiente_finalizar=Envio::where('finalizado',false)->count();
+
+        $this->envios=Envio::where('finalizado',false)->get();
         $this->clientes=Cliente::all()->count();
         $this->ventas=Venta::all()->count();
         $this->productos=Producto::all()->count();

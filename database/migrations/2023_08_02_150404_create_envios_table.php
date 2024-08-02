@@ -21,19 +21,9 @@ return new class extends Migration
             $table->unsignedBigInteger('ruta_id')->nullable(true);
             $table->foreign('ruta_id')->references('id')->on('rutas');
 
-            $table->string('proceso_id')->nullable(true);
-            $table->string('proceso_nombre')->nullable(true);
-
-            $table->string('estado_id')->nullable(true);
-            $table->string('estado_nombre')->nullable(true);
-            $table->string('estado_fecha')->nullable(true);
-            $table->string('estado_observacion')->nullable(true);
-
-            $table->string('user_id_created_at')->nullable(true);
-            $table->string('user_name_created_at')->nullable(true);
+            $table->string('estado_envio')->nullable(true);
 
             $table->string('observaciones_inicio_envio')->nullable(true);
-
             $table->string('observaciones_fin_envio')->nullable(true);
 
             $table->boolean('visible')->nullable(true);

@@ -94,19 +94,9 @@ class CompraController extends Component
 
     public function pdfExportarCompra($id)
     {
-
-        //$traslado=Traslado::with('productos')->find($id)->toArray();
         $compra=Compra::with('productos')->find($id)->toArray();
-
-
-
-
-
         $pdf = FacadePdf::loadView('/livewire/pdf/pdfCompra ',['compra'=>$compra]);
-            //return $pdf->download("abono_$no_abono.pdf");
-
         return $pdf->stream();
-
 
     }
 

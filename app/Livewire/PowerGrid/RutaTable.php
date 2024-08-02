@@ -69,28 +69,15 @@ final class RutaTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-
             Column::make('Codigo', 'codigo')
                 ->sortable()
                 ->searchable(),
-
             Column::make('Nombre', 'nombre')
                 ->sortable()
                 ->searchable(),
-
             Column::make('Descripcion', 'descripcion')
                 ->sortable()
                 ->searchable(),
-
-
-
-            /*
-            Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
- Column::make('Created at', 'created_at')
-                ->sortable()
-                ->searchable(),*/
-
             Column::action('Action')
         ];
     }
@@ -102,21 +89,15 @@ final class RutaTable extends PowerGridComponent
     }
 
 
-
     public function actions(Ruta $row): array
     {
         return [
-            Button::add('edit')
-                ->slot('Editar')
-                ->id()
-                ->class('bg-green-500 hover:bg-green-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('edit', ['rowId' => $row->id]),
 
-                Button::add('show')
-                ->slot('Mostrar')
+                Button::add('exportar')
+                ->slot('Exportar')
                 ->id()
-                ->class('bg-yellow-500 hover:bg-yellow-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('show', ['rowId' => $row->id]),
+                ->class('bg-blue-500 hover:bg-blue-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+                ->dispatch('pdfExportar',['id'  => $row->id]),
 
                 Button::add('delete')
                 ->slot('Borrar')

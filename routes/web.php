@@ -15,12 +15,14 @@ use App\Livewire\ProductoController;
 use App\Livewire\TipoController;
 use App\Livewire\ClienteController;
 use App\Livewire\CompraController;
+use App\Livewire\CotizacionController;
 use App\Livewire\CreditoController;
 use App\Livewire\CuentaCobrarController;
 use App\Livewire\EnvioController;
 use App\Livewire\EstadoCuentaController;
 use App\Livewire\EstadoCuentaVentaController;
 use App\Livewire\EstadoEnvioController;
+use App\Livewire\HistorialCotizacionController;
 use App\Livewire\NotaCreditoController;
 use App\Livewire\ProveedorController;
 use App\Livewire\RoleController;
@@ -127,6 +129,8 @@ Route::view('/', 'welcome');
         Route::get('servicio', ServicioController::class)->name('servicio');
         Route::get('abono', AbonoController::class)->name('abono');
         Route::get('nota_credito', NotaCreditoController::class)->name('nota_credito');
+        Route::get('cotizacion', CotizacionController::class)->name('cotizacion');
+        Route::get('historial_cotizacion', HistorialCotizacionController::class)->name('historial_cotizacion');
 
 
 
@@ -155,6 +159,13 @@ Route::view('/', 'welcome');
 
         Route::get('pdf-exportar-credito/{id?}}', [CreditoController::class, 'pdfExportarCredito'])->name('pdfExportarCredito');
 
+
+        Route::get('pdf-exportar-cotizacion/{id?}}', [HistorialCotizacionController::class, 'pdfExportarCotizacion'])->name('pdfExportarCotizacion');
+
+        Route::get('pdf-exportar-ruta/{id?}}', [RutaController::class, 'pdfExportarRuta'])->name('pdfExportarRuta');
+
+        Route::get('pdf-exportar-envio/{id?}}', [EnvioController::class, 'pdfExportarEnvio'])->name('pdfExportarEnvio');
+        Route::get('pdf-exportar-inventario}}', [InventarioController::class, 'pdfExportarInventario'])->name('pdfExportarInventario');
 
 
 

@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('cliente_id')->nullable(true);
             $table->foreign('cliente_id')->references('id')->on('clientes');
 
-            $table->string('tipo_documento');
             $table->string('no_venta');
             $table->date('fecha_venta');
             $table->time('hora_venta');
@@ -54,8 +53,8 @@ return new class extends Migration
             $table->boolean('visible')->default(true)->nullable(true);
 
 
-            $table->boolean('en_ruta')->nullable(true)->default(false)->comment('se encuentra asignado a una orden de envio o en ruta');
-            $table->boolean('entregado')->nullable(true)->default(false)->comment('fue entrado a su destinatario');
+            $table->string('envio')->nullable(true)->default('SINENVIO')->comment('si requiere envio para asignarno a una hoja de ruta/envio');
+            $table->string('estado_envio')->nullable(true)->default('NO/APLICA')->comment('finalizo el proceso de envio ruta/envio');
 
             $table->integer('correlativo')->nullable(true)->default('0')->comment('correlativo para el seguimiento de las operaciones de abono y notas de credito');
 

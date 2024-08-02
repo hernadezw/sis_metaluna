@@ -2,7 +2,7 @@
 
     <div class="flex w-full">
         <div class="flex w-full md:w-1/3">
-            <x-frk.components.label-input label="no envio" :disabled="$disabled_envio_no" wire:model="no_envio" />
+            <x-frk.components.label-input label="no envio" :disabled="$disabled_envio_no" wire:model="envio_no" />
         </div>
         <div class="flex w-full md:w-1/3">
             <x-frk.components.date-picker wire:model="envio_fecha" label="envio_fecha"/>

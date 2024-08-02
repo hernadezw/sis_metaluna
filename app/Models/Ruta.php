@@ -14,16 +14,11 @@ class Ruta extends Model
         'codigo',
     'nombre',
     'descripcion',
-    'primero_direccion_departamento',
-    'primero_direccion_municipio',
-    'segundo_direccion_departamento',
-    'segundo_direccion_municipio',
-    'tercero_direccion_departamento',
-    'tercero_direccion_municipio',
-    'cuarto_direccion_departamento',
-    'cuarto_direccion_municipio',
-    'quinto_direccion_departamento',
-    'quinto_direccion_municipio',
+
+
+
+
+
 'estado'];
 
 public function Asignaciones(){
@@ -34,6 +29,15 @@ public function Envio(){
     return $this->hasMany(Envio::class);
 }
 
+public function Departamentos(){
+    return $this->belongsToMany(Departamento::class)
+    ->withPivot('observaciones','nombre_departamento','nombre_municipio');
+}
+
+public function Municipios(){
+    return $this->belongsToMany(Municipio::class)
+    ->withPivot('observaciones','nombre_departamento','nombre_municipio');
+}
 
 protected function estado(): Attribute {
     return new Attribute(

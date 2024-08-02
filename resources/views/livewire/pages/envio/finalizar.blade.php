@@ -13,7 +13,11 @@
                     <x-frk.components.date-picker wire:model="envio_fecha" :disabled="$disabled" label="envio_fecha"/>
                 </div>
                 <div class="flex w-full md:w-1/3">
-                    <x-frk.components.label-input label="ruta" :disabled="$disabled_envio_no" wire:model="ruta" />
+                    <x-frk.components.select label="ruta_id" error="ruta_id" :disabled="$disabled" wire:model="ruta_id" >
+                        @foreach ($this->rutas as $data)
+                            <option value="{{ $data->id }}" wire:key="data-{{ $data->id }}">{{ $data->nombre }}</option>
+                        @endforeach
+                    </x-frk.components.select>
                 </div>
 
             </div>
@@ -23,25 +27,67 @@
                 <div class="flex w-full flex-col">
                     <div class="flex w-full w-grap">
                         <div class="flex w-full ">
-                            <x-frk.components.label label="Ventas Asignada"  />
+                            <x-frk.components.subtitle label="Ventas Asignadas"  />
                         </div>
                     </div>
 
-                    @foreach($this->envio->ventas as $key => $value)
-                    <div class="flex w-full w-grap">
+                    <div class="w-full bg-white rounded-lg p-4 shadow-md m-2">
+                        <table class="table-auto w-full">
+                            <thead>
+                                <tr class="border-b w-full">
+                                    <th class="">
+                                        <h2 class="text-ml font-bold text-gray-600">No Venta</h2>
+                                    </th>
+                                    <th class="">
+                                        <h2 class="text-ml font-bold text-gray-600">Fecha Venta</h2>
+                                    </th>
+                                    <th class="">
+                                        <h2 class="text-ml font-bold text-gray-600">Nit</h2>
+                                    </th>
+                                    <th class="">
+                                        <h2 class="text-ml font-bold text-gray-600">Nombres cliente</h2>
+                                    </th>
+                                    <th class="">
+                                        <h2 class="text-ml font-bold text-gray-600">Apellidos cliente</h2>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($this->envio->ventas as $key => $value)
+                                    <tr class="border-b w-full">
+                                        <td class="px-4 py-2 text-left align-top ">
+                                            <div>
+                                                <h2>{{$value->no_venta}}</h2>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2 text-left align-top ">
+                                            <div>
+                                                <h2>{{$value->fecha_venta}}</h2>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2 text-right ">
+                                            <p><span>{{$value->cliente->nit}}</span></p>
+                                        </td>
+                                        <td class="px-4 py-2 text-right ">
+                                            <p><span>{{$value->cliente->nombres_cliente}}</span></p>
+                                        </td>
+                                        <td class="px-4 py-2 text-right ">
+                                            <p><span>{{$value->cliente->apellidos_cliente}}</span></p>
+                                        </td>
 
 
-                        <div class="flex w-full md:w-4/5">
-                            No: {{$value->no_venta}}
-                            Fecha: {{$value->fecha_venta}}
-                            Cliente: {{$value->cliente->nit}}
-                        </div>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                    @endforeach
+
+
                 </div>
             </div>
 
-            ventas {{var_export($ventass)}}
+
 
 
         <!-- //////////Ventas/////////////-->
@@ -56,18 +102,54 @@
             <div class="flex w-full flex-col">
                 <div class="flex w-full w-grap">
                     <div class="flex w-full ">
-                        <x-frk.components.label label="Usuario Asignado"  />
+                        <x-frk.components.subtitle label="Usuarios Asignados"  />
                     </div>
                 </div>
 
-                @foreach($this->envio->users as $key => $value)
-                <div class="flex w-full w-grap">
-                    <div class="flex w-full md:w-4/5">
-                        No: {{$value->id}}
+                <div class="w-full bg-white rounded-lg p-4 shadow-md m-2">
+                    <table class="table-auto w-full">
+                        <thead>
+                            <tr class="border-b w-full">
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">codigo</h2>
+                                </th>
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">nombres</h2>
+                                </th>
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">apellidos</h2>
+                                </th>
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">telefono principal</h2>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($this->envio->users as $key => $value)
+                                <tr class="border-b w-full">
+                                    <td class="px-4 py-2 text-left align-top ">
+                                        <div>
+                                            <h2>{{$value->codigo}}</h2>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2 text-left align-top ">
+                                        <div>
+                                            <h2>{{$value->nombres}}</h2>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2 text-right ">
+                                        <p><span>{{$value->apellidos}}</span></p>
+                                    </td>
+                                    <td class="px-4 py-2 text-right ">
+                                        <p><span>{{$value->telefono_principal}}</span></p>
+                                    </td>
 
-                    </div>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
+
             </div>
         </div>
         <!-- //////////Usuarios/////////////-->
@@ -78,18 +160,52 @@
             <div class="flex w-full flex-col">
                 <div class="flex w-full w-grap">
                     <div class="flex w-full ">
-                        <x-frk.components.label label="Vehiculo Asignado"  />
+                        <x-frk.components.subtitle label="Vehiculos Asignados"  />
                     </div>
                 </div>
 
-                @foreach($this->envio->vehiculos as $key => $value)
-                <div class="flex w-full w-grap">
-                    <div class="flex w-full md:w-4/5">
-                        No: {{$value->id}}
 
-                    </div>
+                <div class="w-full bg-white rounded-lg p-4 shadow-md m-2">
+                    <table class="table-auto w-full">
+                        <thead>
+                            <tr class="border-b w-full">
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">codigo</h2>
+                                </th>
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">alias</h2>
+                                </th>
+                                <th class="">
+                                    <h2 class="text-ml font-bold text-gray-600">Placa</h2>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($this->envio->vehiculos as $key => $value)
+                                <tr class="border-b w-full">
+                                    <td class="px-4 py-2 text-left align-top ">
+                                        <div>
+                                            <h2>{{$value->codigo}}</h2>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2 text-left align-top ">
+                                        <div>
+                                            <h2>{{$value->alias}}</h2>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2 text-right ">
+                                        <p><span>{{$value->numero_placa}}</span></p>
+                                    </td>
+
+
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                @endforeach
+
+
             </div>
         </div>
         <!-- //////////vehiculos/////////////-->

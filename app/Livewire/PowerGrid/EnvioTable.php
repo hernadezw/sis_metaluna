@@ -52,9 +52,11 @@ final class EnvioTable extends PowerGridComponent
             ->add('envio_no')
             ->add('envio_fecha_formatted', fn (Envio $model) => Carbon::parse($model->envio_fecha)->format('d/m/Y'))
             ->add('ruta_id')
+            ->add('ruta.codigo')
+            ->add('ruta.nombre')
             ->add('proceso_id')
             ->add('proceso_nombre')
-            ->add('estado_id')
+            ->add('estado_envio')
             ->add('estado_nombre')
             ->add('estado_fecha')
             ->add('estado_observacion')
@@ -70,7 +72,6 @@ final class EnvioTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id'),
             Column::make('Envio no', 'envio_no')
                 ->sortable()
                 ->searchable(),
@@ -78,57 +79,16 @@ final class EnvioTable extends PowerGridComponent
             Column::make('Envio fecha', 'envio_fecha_formatted', 'envio_fecha')
                 ->sortable(),
 
-            Column::make('Ruta id', 'ruta_id'),
-            Column::make('Proceso id', 'proceso_id')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Proceso nombre', 'proceso_nombre')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Estado id', 'estado_id')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Estado nombre', 'estado_nombre')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Estado fecha', 'estado_fecha')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Estado observacion', 'estado_observacion')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('User id created at', 'user_id_created_at')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('User name created at', 'user_name_created_at')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Observaciones inicio envio', 'observaciones_inicio_envio')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Observaciones fin envio', 'observaciones_fin_envio')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Visible', 'visible')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Finalizado', 'finalizado')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Created at', 'created_at_formatted', 'created_at')
+                Column::make('Estado Envio',  'estado_envio')
                 ->sortable(),
+
+                Column::make('Ruta Codigo', 'ruta.codigo'),
+                Column::make('Ruta Nombre', 'ruta.nombre'),
+
+
+
+
+
 
             /* Column::make('Created at', 'created_at')
                 ->sortable()
@@ -150,17 +110,19 @@ final class EnvioTable extends PowerGridComponent
     public function actions(Envio $row): array
     {
         return [
-            Button::add('edit')
-                ->slot('Editar')
-                ->id()
-                ->class('bg-green-500 hover:bg-green-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('edit', ['rowId' => $row->id]),
 
-                Button::add('show')
-                ->slot('Mostrar')
+
+                Button::add('finalizar')
+                ->slot('Finalizar')
                 ->id()
-                ->class('bg-yellow-500 hover:bg-yellow-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
-                ->dispatch('show', ['rowId' => $row->id]),
+                ->class('bg-orange-500 hover:bg-orange-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+                ->dispatch('finalizar',['id'  => $row->id]),
+
+                Button::add('exportar')
+                ->slot('Exportar')
+                ->id()
+                ->class('bg-blue-500 hover:bg-blue-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+                ->dispatch('pdfExportar',['id'  => $row->id]),
 
                 Button::add('delete')
                 ->slot('Borrar')

@@ -7,9 +7,12 @@ use App\Models\EstadoCuenta;
 use App\Models\Venta;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
+
 
 class VentaController extends Component
 {
+    use LivewireAlert;
     public $title='Detalle Venta';
     public $data, $id_data,$id_last;
     public $isCreate = false,$isEdit = false, $isShow = false, $isDelete = false,$isAddProduct=false,$disabled_nombre_producto=false,$disabled_existencia_producto=false,$disabled_codigo_producto=false,$disabled_subtotal_producto=false,$tipo_cliente;
@@ -40,7 +43,7 @@ class VentaController extends Component
     public $envio=false,$venta=null;
 
 
-    protected $listeners=['edit', 'delete','showDetalle','pdfExportar'];
+    protected $listeners=['edit', 'delete','showDetalle','pdfExportar','envio'];
 
     public function render()
     {
@@ -74,6 +77,47 @@ class VentaController extends Component
         return redirect()->route('pdfExportarVenta',$id);
 
     }
+
+
+    public function Envio($id){
+
+
+
+        $data=Venta::find($id);
+
+        if($data->envio!="ENVIO"){
+            $temp_envio="ENVIO";
+            $temp_estado_envio="SIN ASIGNAR";
+
+        }else{
+            $temp_envio="SINENVIO";
+            $temp_estado_envio="NO APLICA";
+        }
+
+        $data->update([
+
+            'envio'=>$temp_envio,
+            'estado_envio'=>$temp_estado_envio
+        ]);
+
+
+
+        $this->alert('success', 'ENVIO', [
+            'position' => 'center',
+            'timer' => '2000',
+            'toast' => true,
+            'showConfirmButton' => false,
+            'onConfirmed' => '',
+            'timerProgressBar' => true,
+            'text' => 'Envio cambiado correctamente',
+           ]);
+
+           $this->dispatch('pg:eventRefresh-default');
+           $this->cancel();
+
+
+    }
+
 
     public function pdfExportarVenta($id)
     {

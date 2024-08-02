@@ -71,7 +71,7 @@
 @foreach ($estado_cuenta as $item)
 <tr style="height:13pt">
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['codigo']}}</p>
+    <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['codigo_interno']}}</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
         <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['nombre_empresa']}}</p>

@@ -64,10 +64,10 @@
     <p class="s3" style="padding-left: 25pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$venta['forma_pago']}}</p>
     </td>
     <td style="width:84pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
-    <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 12pt;text-align: left;">ss:</p>
+    <p class="s3" style="padding-left: 13pt;text-indent: 0pt;line-height: 12pt;text-align: left;">Envio:</p>
     </td>
     <td style="width:117pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p class="s3" style="padding-left: 11pt;text-indent: 0pt;line-height: 12pt;text-align: left;">ss</p>
+    <p class="s3" style="padding-left: 11pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$venta['envio']}}</p>
     </td>
     <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">
     <p class="s3" style="padding-left: 5pt;padding-right: 5pt;text-indent: 0pt;line-height: 12pt;text-align: center;">Pagina</p>
@@ -121,9 +121,9 @@
 </p>
 <table style="border-collapse:collapse;margin-left:5.93pt" cellspacing="0">
 <tr style="height:13pt">
-<td style="width:900 pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="5" bgcolor="#F9E1D4">
-<p class="s2" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">DETALLE VENTA</p>
-</td>
+    <td style="width:900 pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="5" bgcolor="#F9E1D4">
+        <p class="s2" style="padding-right: 4pt;text-indent: 0pt;line-height: 12pt;text-align: center;">DETALLE VENTA</p>
+    </td>
 </tr>
 <tr style="height:13pt">
 <td style="width:49pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#F9E1D4">

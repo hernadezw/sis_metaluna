@@ -15,7 +15,7 @@ class Envio extends Model
     'ruta_id',
     'proceso_id',
     'proceso_nombre',
-    'estado_id',
+    'estado_envio',
     'estado_nombre',
     'estado_fecha',
     'estado_observacion',

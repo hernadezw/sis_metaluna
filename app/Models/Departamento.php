@@ -25,11 +25,12 @@ class Departamento extends Model
 
      public function Proveedores(){
         // $this->belongsTo('App\Models\Rol');
-         return $this->hasMany(Proveedores::class);
+         return $this->hasMany(Proveedor::class);
      }
-     public function Ruta(){
-        // $this->belongsTo('App\Models\Rol');
-         return $this->hasMany(Ruta::class);
+     public function Rutas(){
+
+         return $this->belongsToMany(Ruta::class)
+         ->withPivot('observaciones','nombre_departamento','nombre_municipio');
      }
 
 

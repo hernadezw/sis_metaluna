@@ -96,7 +96,7 @@ final class TrasladoTable extends PowerGridComponent
             Button::add('exportar')
             ->slot('Exportar')
             ->id()
-            ->class('bg-green-500 hover:bg-green-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+            ->class('bg-blue-500 hover:bg-blue-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
             ->dispatch('pdfExportar',['id'  => $row->id]),
 
 

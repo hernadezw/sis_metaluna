@@ -55,6 +55,14 @@ class Producto extends Model
         ->as('producto_venta')
         ->withTimestamps()
         ->withPivot('cantidad','subtotal','precio_venta');
+
+    }
+
+    public function Cotizaciones(){
+        return $this->belongsToMany(Cotizacion::class)
+        ->as('cotizacion_producto')
+        ->withTimestamps()
+        ->withPivot('cantidad','sub_total','precio_cotizacion');
     }
 /*
     public function Sucursals(){

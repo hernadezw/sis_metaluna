@@ -18,26 +18,6 @@ return new class extends Migration
             $table->string('codigo')->nullable();
             $table->string('nombre')->nullable();
             $table->string('descripcion')->nullable();
-
-            $table->integer('primero_direccion_departamento')->nullable();
-            $table->integer('primero_direccion_municipio')->nullable();
-
-            $table->integer('segundo_direccion_departamento')->nullable();
-            $table->integer('segundo_direccion_municipio')->nullable();
-
-            $table->integer('tercero_direccion_departamento')->nullable();
-            $table->integer('tercero_direccion_municipio')->nullable();
-
-
-            $table->integer('cuarto_direccion_departamento')->nullable();
-            $table->integer('cuarto_direccion_municipio')->nullable();
-
-
-            $table->integer('quinto_direccion_departamento')->nullable();
-            $table->integer('quinto_direccion_municipio')->nullable();
-
-
-
             $table->boolean('estado');
             $table->timestamps();
         });

@@ -73,6 +73,7 @@ final class VentaTable extends PowerGridComponent
             ->add('visible')
             ->add('sucursal_id')
             ->add('envio')
+            ->add('estado_envio')
             ->add('en_ruta')
             ->add('entregado')
             ->add('created_at');
@@ -98,12 +99,16 @@ final class VentaTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
+                Column::make('Envio', 'envio')
+                ->sortable()
+                ->searchable(),
+                Column::make('Envio', 'estado_envio')
+                ->sortable()
+                ->searchable(),
                 Column::make('Saldo venta', 'saldo_venta')
                 ->sortable()
                 ->searchable(),
-                Column::make('Tipo Doc', 'tipo_documento')
-                ->sortable()
-                ->searchable(),
+
 
 
             Column::make('anulado', 'anulado')
@@ -145,7 +150,11 @@ final class VentaTable extends PowerGridComponent
                 ->class('bg-red-500 hover:bg-red-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
                 ->dispatch('pdfExportar',['id'  => $row->id]),
 
-
+                Button::add('envio')
+                ->slot('Envio')
+                ->id()
+                ->class('bg-orange-500 hover:bg-orange-700 cursor-pointer text-white px-1 py-0.5 rounded text-sm')
+                ->dispatch('envio',['id'  => $row->id]),
         ];
 
     }

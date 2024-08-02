@@ -81,7 +81,7 @@ class VentaRapidaController extends Component
 
 
     //variables
-    public $id_forma_pago=null, $id_envio=null, $id_tipo=null, $id_marca=null, $id_material=null, $id_tipo_documento="VENTA";
+    public $id_forma_pago=null, $id_envio="SINENVIO", $estado_envio="NO/APLICA",$id_tipo=null, $id_marca=null, $id_material=null;
 
 
     public $disabledInputPasswordAdmin=null;
@@ -119,6 +119,7 @@ public $email_edit=null, $codigo_edit=null;
         $this->temp = Venta::all();
         $this->forma_pagos=DataSistema::$forma_pago;
         $this->tipo_documento=DataSistema::$tipo_documento;
+        $this->envios=DataSistema::$envio;
         $data=Venta::latest()->first();
 
 
@@ -142,14 +143,6 @@ public $email_edit=null, $codigo_edit=null;
         $this->isSearchCliente=true;
     }
 
-    public function updatedIdTipoDocumento($value){
-        if($value!="VENTA"){
-            $this->title="COTIZACION";
-        }else{
-            $this->title="VENTA";
-        }
-
-    }
 
 
 
@@ -476,6 +469,17 @@ public $email_edit=null, $codigo_edit=null;
         };
     }
 
+    public function updatedIdEnvio($value){
+        if($value!="SINENVIO"){
+            $this->estado_envio="SIN ASIGNAR";
+
+        }else{
+
+            $this->estado_envio="NO APLICA";
+
+        }
+    }
+
     public function agregarDetalle($id){
         $this->validate(['subtotal_producto'=>'required',
     'cantidad_producto'=>"numeric|required|min:1|max:$this->existencia_producto"]);
@@ -548,7 +552,6 @@ public $email_edit=null, $codigo_edit=null;
                                 [
                                     'cliente_id'=>$this->cliente_id,
 
-                                    'tipo_documento'=>$this->id_tipo_documento,
                                     'no_venta'=>$this->no_venta,
                                     'fecha_venta'=>$this->fecha_venta,
                                     'hora_venta'=>Carbon::now()->toTimeString(),
@@ -558,6 +561,8 @@ public $email_edit=null, $codigo_edit=null;
 
                                     'sucursal_id'=>Auth::user()->sucursal_id,
                                     'forma_pago'=>$this->id_forma_pago,
+                                    'envio'=>$this->id_envio,
+                                    'estado_envio'=>$this->estado_envio,
 
                                     'credito'=>true,
                                     'no_credito'=>$this->no_credito,
@@ -578,6 +583,7 @@ public $email_edit=null, $codigo_edit=null;
                             'onConfirmed' => '',
                             'timerProgressBar' => true,
                            ]);
+                           $this->reset();
                            return redirect()->route('pdfVentaRapida',$id);
                         }
                     }
@@ -588,7 +594,6 @@ public $email_edit=null, $codigo_edit=null;
                             [
                                 'cliente_id'=>$this->cliente_id,
 
-                                'tipo_documento'=>$this->id_tipo_documento,
                                 'no_venta'=>$this->no_venta,
                                 'fecha_venta'=>$this->fecha_venta,
                                 'hora_venta'=>Carbon::now()->toTimeString(),
@@ -598,6 +603,8 @@ public $email_edit=null, $codigo_edit=null;
 
                                 'sucursal_id'=>Auth::user()->sucursal_id,
                                 'forma_pago'=>$this->id_forma_pago,
+                                'envio'=>$this->id_envio,
+                                'estado_envio'=>$this->estado_envio,
 
                                 'efectivo'=>true,
                                 'cancelado'=>true,
@@ -623,6 +630,7 @@ public $email_edit=null, $codigo_edit=null;
                                 'onConfirmed' => '',
                                 'timerProgressBar' => true,
                                ]);
+                               $this->reset();
                                return redirect()->route('pdfVentaRapida',$id);
                         }
                 }else {
@@ -694,15 +702,8 @@ public $email_edit=null, $codigo_edit=null;
         }
 
         $pdf = FacadePdf::loadView('/livewire/pdf/pdfVentaRapida',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual]);
-
-        //$pdf = Pdf::loadView('pdf.invoice', $data);
-       // return $pdf->download("venta_$no_venta.pdf");
-
-        //return redirect()->route('pdfVentaRapida',$id);
-
-        //return $pdf->download('venta_pdf.pdf');
         return $pdf->stream();
-        //return $pdf->download('itsolutionstuff.pdf');
+
 
     }
 
