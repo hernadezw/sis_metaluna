@@ -51,6 +51,7 @@ final class CotizacionTable extends PowerGridComponent
             ->add('id')
             ->add('id')
             ->add('cliente.nombre_empresa')
+            ->add('cliente.tipo_cliente')
             ->add('no_cotizacion')
             ->add('fecha_cotizacion_formatted', fn (Cotizacion $model) => Carbon::parse($model->fecha_cotizacion)->format('d/m/Y'))
             ->add('total_cotizacion')
@@ -72,6 +73,9 @@ final class CotizacionTable extends PowerGridComponent
             ->searchable(),
 
             Column::make('Cliente id', 'cliente.nombre_empresa'),
+            Column::make('Tipo Cliente', 'cliente.tipo_cliente')
+            ->sortable()
+            ->searchable(),
 
 
             Column::make('Fecha cotizacion', 'fecha_cotizacion_formatted', 'fecha_cotizacion')

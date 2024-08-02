@@ -50,6 +50,7 @@ final class VentaTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('cliente.nombre_empresa')
+            ->add('cliente.tipo_cliente')
             ->add('no_venta')
             ->add('fecha_venta_formatted', fn (Venta $model) => Carbon::parse($model->fecha_venta)->format('d/m/Y'))
             ->add('total_venta')
@@ -87,6 +88,8 @@ final class VentaTable extends PowerGridComponent
             ->searchable(),
 
             Column::make('Cliente id', 'cliente.nombre_empresa'),
+            Column::make('Cliente id', 'cliente.tipo_cliente')
+            ->sortable(),
 
 
             Column::make('Fecha venta', 'fecha_venta_formatted', 'fecha_venta')
