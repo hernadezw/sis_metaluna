@@ -23,6 +23,8 @@ use App\Livewire\EstadoCuentaController;
 use App\Livewire\EstadoCuentaVentaController;
 use App\Livewire\EstadoEnvioController;
 use App\Livewire\HistorialCotizacionController;
+use App\Livewire\InformeEstadoCuentaController;
+use App\Livewire\InformeVentaController;
 use App\Livewire\NotaCreditoController;
 use App\Livewire\ProveedorController;
 use App\Livewire\RoleController;
@@ -35,6 +37,9 @@ use App\Livewire\VehiculoController;
 use App\Livewire\VentaController;
 use App\Livewire\VentaRapidaController;
 use App\Models\AjusteInventario;
+use Illuminate\Support\Facades\DB;
+
+use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 Route::view('/', 'welcome');
 
@@ -133,41 +138,43 @@ Route::view('/', 'welcome');
         Route::get('historial_cotizacion', HistorialCotizacionController::class)->name('historial_cotizacion');
 
 
+        Route::get('informe_venta', InformeVentaController::class)->name('informe_venta');
+        Route::get('informe_estado_cuenta', InformeEstadoCuentaController::class)->name('informe_estado_cuenta');
+
+
 
 
     });
 
-   // Route::get('generate-PDF', [VentaRapidaController::class, 'generatePDF']);
 
         Route::get('pdf-venta-rapida/{id?}}', [VentaRapidaController::class, 'pdfVentaRapida'])->name('pdfVentaRapida');
-        Route::get('pdf-exportar-venta/{id?}}', [VentaController::class, 'pdfExportarVenta'])->name('pdfExportarVenta');
 
         Route::get('pdf-exportar-abono/{id?}}', [AbonoController::class, 'pdfExportarAbono'])->name('pdfExportarAbono');
         Route::get('pdf-exportar-nota-credito/{id?}}', [NotaCreditoController::class, 'pdfExportarNotaCredito'])->name('pdfExportarNotaCredito');
 
-        Route::get('pdf-exportar-estado-cuenta}', [EstadoCuentaController::class, 'pdfExportarEstadoCuenta'])->name('pdfExportarEstadoCuenta');
-        Route::get('pdf-exportar-estado-cuenta/{id?}}', [EstadoCuentaController::class, 'pdfExportarEstadoCuenta'])->name('pdfExportarEstadoCuenta');
+
 
         Route::get('pdf-exportar-estado-cuenta-venta}', [EstadoCuentaVentaController::class, 'pdfExportarEstadoCuentaVenta'])->name('pdfExportarEstadoCuentaVenta');
-        Route::get('pdf-exportar-estado-cuenta-venta/{id?}}', [EstadoCuentaVentaController::class, 'pdfExportarEstadoCuentaVenta'])->name('pdfExportarEstadoCuentaVenta');
+        Route::get('pdf-exportar-estado-cuenta-venta/{id?}', [EstadoCuentaVentaController::class, 'pdfExportarEstadoCuentaVenta'])->name('pdfExportarEstadoCuentaVenta');
 
-        Route::get('pdf-exportar-ajuste-inventario/{id?}}', [AjusteInventarioController::class, 'pdfExportarAjusteInventario'])->name('pdfExportarAjusteInventario');
+        Route::get('pdf-exportar-ajuste-inventario/{id?}', [AjusteInventarioController::class, 'pdfExportarAjusteInventario'])->name('pdfExportarAjusteInventario');
 
-        Route::get('pdf-exportar-traslado/{id?}}', [TrasladoController::class, 'pdfExportarTraslado'])->name('pdfExportarTraslado');
+        Route::get('pdf-exportar-traslado/{id?}', [TrasladoController::class, 'pdfExportarTraslado'])->name('pdfExportarTraslado');
 
-        Route::get('pdf-exportar-compra/{id?}}', [CompraController::class, 'pdfExportarCompra'])->name('pdfExportarCompra');
+        Route::get('pdf-exportar-compra/{id?}', [CompraController::class, 'pdfExportarCompra'])->name('pdfExportarCompra');
 
-        Route::get('pdf-exportar-credito/{id?}}', [CreditoController::class, 'pdfExportarCredito'])->name('pdfExportarCredito');
-
-
-        Route::get('pdf-exportar-cotizacion/{id?}}', [HistorialCotizacionController::class, 'pdfExportarCotizacion'])->name('pdfExportarCotizacion');
-
-        Route::get('pdf-exportar-ruta/{id?}}', [RutaController::class, 'pdfExportarRuta'])->name('pdfExportarRuta');
-
-        Route::get('pdf-exportar-envio/{id?}}', [EnvioController::class, 'pdfExportarEnvio'])->name('pdfExportarEnvio');
-        Route::get('pdf-exportar-inventario}}', [InventarioController::class, 'pdfExportarInventario'])->name('pdfExportarInventario');
+        Route::get('pdf-exportar-credito/{id?}', [CreditoController::class, 'pdfExportarCredito'])->name('pdfExportarCredito');
 
 
+        Route::get('pdf-exportar-cotizacion/{id?}', [HistorialCotizacionController::class, 'pdfExportarCotizacion'])->name('pdfExportarCotizacion');
+
+        Route::get('pdf-exportar-ruta/{id?}', [RutaController::class, 'pdfExportarRuta'])->name('pdfExportarRuta');
+
+        Route::get('pdf-exportar-envio/{id?}', [EnvioController::class, 'pdfExportarEnvio'])->name('pdfExportarEnvio');
+        Route::get('pdf-exportar-inventario}', [InventarioController::class, 'pdfExportarInventario'])->name('pdfExportarInventario');
+
+
+        Route::get('pdf-exportar-estado-cuenta/{id}', [EstadoCuentaController::class, 'pdfExportarEstadoCuenta'])->name('pdfExportarEstadoCuenta');
 
 
 require __DIR__.'/auth.php';

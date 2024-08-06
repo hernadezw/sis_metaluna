@@ -15,21 +15,21 @@ class ClienteSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('clientes')->insert(['codigo_interno'=>'1','codigo_mayorista'=>null,'nit'=>'c/f','nombre_empresa'=>'Sin especificar',
+        DB::table('clientes')->insert(['codigo_interno'=>'1','nit'=>'c/f','nombre_empresa'=>'Sin especificar',
         'nombres_cliente'=>'Consumidor Final','apellidos_cliente'=>'no aplica','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'00000000','direccion_fisica'=>'Ciudad','direccion_departamento'=>1,'direccion_municipio'=> 1,
-        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'0.00','credito_actual'=>'0.00','dias_limite_credito'=>'0','tipo_cliente'=>'MINO','created_at'=>'2024-07-04 06:41:51','updated_at'=>'2024-07-04 06:41:51']);
+        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'0.00','credito_actual'=>'0.00','dias_limite_credito'=>'0','tipo_cliente'=>'MINO','created_at'=>'2024-07-04 06:41:51','updated_at'=>'2024-07-04 06:41:51','ruta_id'=>1]);
 
         DB::table('clientes')->insert(['codigo_interno'=>'2','codigo_mayorista'=>'1','nit'=>'00001','nombre_empresa'=>'Ferreteria la Luz',
         'nombres_cliente'=>'Franky Emmanuel','apellidos_cliente'=>'Mejía Vicente','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'42110990','direccion_fisica'=>'Calle Pahula 2-59 Zona 5','direccion_departamento'=>8,'direccion_municipio'=> 2,
-        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'5000.00','credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MAYO','created_at'=>'2024-07-05 06:41:51','updated_at'=>'2024-07-05 06:41:51']);
+        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'50000.00','credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MAYO','created_at'=>'2024-07-05 06:41:51','updated_at'=>'2024-07-05 06:41:51','ruta_id'=>1]);
 
         DB::table('clientes')->insert(['codigo_interno'=>'3','codigo_mayorista'=>'2','nit'=>'00002','nombre_empresa'=>'Ferreteria la pala',
         'nombres_cliente'=>'Pedro','apellidos_cliente'=>'Gomez','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'42110990','direccion_fisica'=>'Calle Pahula 2-59 Zona 5','direccion_departamento'=>8,'direccion_municipio'=> 2,
-        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'5000.00','credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MAYO','created_at'=>'2024-07-06 06:41:51','updated_at'=>'2024-07-06 06:41:51']);
+        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'50000.00','credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MAYO','created_at'=>'2024-07-06 06:41:51','updated_at'=>'2024-07-06 06:41:51','ruta_id'=>2]);
 
-        DB::table('clientes')->insert(['codigo_interno'=>'4','codigo_mayorista'=>null,'nit'=>'00003','nombre_empresa'=>'Ferreteria dayana',
+        DB::table('clientes')->insert(['codigo_interno'=>'4','nit'=>'00003','nombre_empresa'=>'Ferreteria dayana',
         'nombres_cliente'=>'Marcos','apellidos_cliente'=>'Lopez','cui'=>null,'numero_patente'=>null,'telefono_principal'=>'42110990','direccion_fisica'=>'Calle Pahula 2-59 Zona 5','direccion_departamento'=>8,'direccion_municipio'=> 2,
-        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'limite_credito'=>'5000.00','credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MINO','created_at'=>'2024-07-07 06:41:51','updated_at'=>'2024-07-07 06:41:51']);
+        'ubicacion_latitud'=>0,'ubicacion_longitud'=>0,'correo_electronico'=>null,'estado'=>1,'credito_actual'=>'0.00','dias_limite_credito'=>'30','tipo_cliente'=>'MINO','created_at'=>'2024-07-07 06:41:51','updated_at'=>'2024-07-07 06:41:51','ruta_id'=>3]);
     }
 }
 

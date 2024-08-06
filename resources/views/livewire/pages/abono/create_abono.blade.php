@@ -13,26 +13,21 @@
     </x-slot>
     <x-slot:body>
     <div class="flex w-full flex-wrap m-4">
-        <div class="flex w-full ">
-            <div class="flex w-full">
+        <x-frk.components.button label="Buscar" wire:click="buscarVenta()" />
 
-                <x-frk.components.select label="Venta Numero" :disabled="$disabled" error="venta_id" wire:model.live="venta_id" id="venta_id">
-                    @foreach ($this->ventas_credito as $data)
-                    <option value="{{ $data->id }}" wire:key="tipo-{{ $data->id }}">No. Venta: {{ $data->no_venta }} Saldo Credito:{{ $data->saldo_venta }}</option>
-                    @endforeach
-                </x-forms.select>
-            </div>
-        </div>
 
             <div class="flex w-full ">
+                <div class=" w-full md:w-2/8">
+                    <x-frk.components.label-input label="No Venta:" :disabled="$disabled" wire:model.live="no_venta" />
+                </div>
 
-                <div class=" w-full md:w-1/3">
+                <div class=" w-full md:w-2/8">
                     <x-frk.components.input-money  label="Saldo credito venta:" :disabled="$disabled" wire:model.live="saldo_credito" />
                 </div>
-                <div class=" w-full md:w-1/3">
+                <div class=" w-full md:w-2/8">
                     <x-frk.components.input-money  label="Cantidad Abono:" error="cantidad_abono" :disabled="$disabled" wire:model.live="cantidad_abono" />
                 </div>
-                <div class=" w-full md:w-1/3">
+                <div class=" w-full md:w-2/8">
                     <x-frk.components.input-money label="Nuevo saldo:" error="nuevo_saldo" :disabled="$disabled" wire:model="nuevo_saldo" />
                 </div>
             </div>

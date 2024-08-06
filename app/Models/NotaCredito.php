@@ -15,4 +15,6 @@ class NotaCredito extends Model
         return $this->belongsTo(Venta::class);
     }
 
+
+
 }

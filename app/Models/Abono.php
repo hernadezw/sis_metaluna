@@ -29,4 +29,6 @@ class Abono extends Model
     public function Venta(){
         return $this->belongsTo(Venta::class);
     }
+
+
 }

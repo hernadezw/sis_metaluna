@@ -8,7 +8,9 @@ use App\Models\EstadoCuenta;
 use App\Models\NotaCredito;
 use App\Models\Venta;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class EstadoCuentaVentaController extends Component
 {
@@ -32,19 +34,66 @@ class EstadoCuentaVentaController extends Component
         'saldo_credito'=>'required'
     ];
 
+
+
+    public $ventas=[];
+
+
+
+    public $filtroNoVenta;
+    public $filtroCodigoCliente=NULL;
+    public $filtroNombreCliente;
+    public $filtroFechaVenta;
+    public $filtroRuta;
+    public $filtroFormaPago;
+    public $filtroEnvio;
+    public $filtroTipoCliente;
+    public $filtroRutaCliente=null;
+
+    public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+
+    /////////////////////
+
     public function render()
     {
+
+/*        $this->ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->leftJoin('rutas','clientes.ruta_id','=','rutas.id')
+            ->where('no_venta','LIKE',"%{$this->filtroNoVenta}%")
+            ->where('nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+            ->where('codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+            ->where('fecha_venta','LIKE',"%{$this->filtroFechaVenta}%")
+            ->where('forma_pago','LIKE',"%{$this->filtroFormaPago}%")
+
+            ->get();
+            */
+
+
+
+            $this->ventas=Venta::with('productos')->where('no_venta','LIkE',"%{$this->filtroNoVenta}%")->where('fecha_venta','LIkE',"%{$this->filtroFechaVenta}%")->with('abonos')->with('notacreditos')->with('credito')->with('cliente')->whereRelation('cliente','nombres_cliente','LIkE',"%{$this->filtroNombreCliente}%")->whereRelation('cliente','codigo_interno','LIkE',"%{$this->filtroCodigoCliente}%")->get();
+
+
+        //dd($this->ventas[0]->cliente->nombres_cliente);
+
+
         return view('livewire.pages.estado_cuenta_venta.index');
     }
 
 
 
-
-    public function pdfExportar($id){
-        return redirect()->route('pdfExportarEstadoCuentaVenta',$id);
+    public function exportarGeneral()
+    {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfEstadoCuentaVentaGeneral',['ventas' => $this->ventas,'total_ventas'=>$this->total_ventas]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
     }
 
-    public function pdfExportarEstadoCuentaVenta($id)
+
+
+    public function exportarFila($id)
     {
 
 
@@ -68,7 +117,7 @@ class EstadoCuentaVentaController extends Component
         $cliente=Cliente::find($venta['cliente_id'])->toArray();
 
         //$user=User::find(1)->toArray();
-        $saldo_anterior=$venta['saldo_credito'];
+        $saldo_anterior=$venta['saldo_credito_cliente'];
 
         if ($venta['forma_pago']==='CREDI') {
             $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
@@ -79,8 +128,11 @@ class EstadoCuentaVentaController extends Component
             $saldo_actual=$venta['total_venta'];
         }
 
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfEstadoCuentaVenta',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual,'venta' => $venta,'cliente'=>$cliente,'abono'=>$abono,'nota_credito'=>$nota_credito,'correl'=>$correl]);
-
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfEstadoCuentaVenta',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual,'venta' => $venta,'cliente'=>$cliente,'abono'=>$abono,'nota_credito'=>$nota_credito,'correl'=>$correl]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
 
 
         //$pdf = Pdf::loadView('pdf.invoice', $data);

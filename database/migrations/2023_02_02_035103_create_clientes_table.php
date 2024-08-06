@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->id()->autoIncrement();
-            $table->integer('codigo_interno')->unique()->nullable();
-            $table->integer('codigo_mayorista')->nullable(true);
+            $table->string('codigo_interno')->unique()->nullable(false);
+            $table->string('codigo_mayorista')->default('N/A')->nullable(false);
             $table->string('nombre_empresa',150)->nullable(true);
             $table->string('nombres_cliente',150);
             $table->string('apellidos_cliente',150)->nullable();
@@ -41,6 +41,10 @@ return new class extends Migration
             $table->foreign('direccion_departamento')->references('id')->on('departamentos');
             $table->unsignedBigInteger('direccion_municipio')->nullable();
             $table->foreign('direccion_municipio')->references('id')->on('municipios');
+
+
+            $table->unsignedBigInteger('ruta_id')->nullable(true);
+            $table->foreign('ruta_id')->references('id')->on('rutas');
 
             $table->timestamps();
         });

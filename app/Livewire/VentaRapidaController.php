@@ -113,40 +113,33 @@ public $email_edit=null, $codigo_edit=null;
 
     public function render(){
 
-
-
-
-        $this->temp = Venta::all();
+        //$this->temp = Venta::all();
         $this->forma_pagos=DataSistema::$forma_pago;
-        $this->tipo_documento=DataSistema::$tipo_documento;
         $this->envios=DataSistema::$envio;
-        $data=Venta::latest()->first();
+        $ultima_venta=Venta::latest()->first();
 
 
-        if ( $data) {
-            $this->id=$data->id+1;
+        if ( $ultima_venta) {
+            $this->id=$ultima_venta->id+1;
             $this->no_venta=$this->id;
 
         }else{
             $this->id=1;
             $this->no_venta=$this->id;
         }
-        $this->proveedores=Proveedor::all();
+
         $this->fecha_venta = Carbon::now()->toDateString();
         $this->disabledInput=true;
         return view('livewire.pages.venta_rapida.index');
     }
 
 
+    /////////////BUSCAR CLIENTES//////////////
+
 
     public function searchCliente(){
         $this->isSearchCliente=true;
     }
-
-
-
-
-
 
     public function updatedSearchNombresCliente($value){
         $this->reset(['search_codigo_cliente','search_nit_cliente']);
@@ -163,6 +156,10 @@ public $email_edit=null, $codigo_edit=null;
         $this->clientes=Cliente::where('nit','like',"%$value%")->get();
 
     }
+
+
+
+    /////////////////////// AGREAGR CLIENTE//////////
 
     public function agregarCliente($id){
             $cliente=Cliente::find($id);
@@ -546,35 +543,61 @@ public $email_edit=null, $codigo_edit=null;
                         if($cantidad_credito>=$this->limite_credito_temp && !$this->autorizacion_limite_credito){
                             $this->addError('saldo_credito', 'Supera el credito asignado');
                         }else{
-                            $credito=$this->total_venta;
                             $saldo_venta=$this->total_venta;
                             $data=Venta::create(
                                 [
                                     'cliente_id'=>$this->cliente_id,
+                                    'saldo_credito_cliente'=>$this->saldo_credito,
 
                                     'no_venta'=>$this->no_venta,
                                     'fecha_venta'=>$this->fecha_venta,
                                     'hora_venta'=>Carbon::now()->toTimeString(),
                                     'total_venta'=>$this->total_venta,
                                     'observaciones_venta'=>$this->observaciones_venta,
-                                    'saldo_credito'=>$this->saldo_credito,
+                                    'forma_pago'=>$this->id_forma_pago,
 
                                     'sucursal_id'=>Auth::user()->sucursal_id,
-                                    'forma_pago'=>$this->id_forma_pago,
+
                                     'envio'=>$this->id_envio,
                                     'estado_envio'=>$this->estado_envio,
 
                                     'credito'=>true,
                                     'no_credito'=>$this->no_credito,
-                                    'total_credito'=>$credito,
+                                    'total_credito'=>$this->total_venta,
+                                    'fecha_credito'=>$this->fecha_venta,
                                     'observaciones_credito'=>$this->observaciones_credito,
-                                    'saldo_venta'=>$saldo_venta
+                                    'saldo_total_venta'=>$saldo_venta
                                 ]);
 
                             $id=$data->id;
                         foreach ($this->productosDetalle as $key => $value) {
                             $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
                         }
+
+                        $ultimo_credito=Credito::latest()->first();
+
+
+                        if ( $ultimo_credito) {
+                            $this->id=$ultimo_credito->id+1;
+                            $this->no_credito=$this->id;
+
+                        }else{
+                            $this->id=1;
+                            $this->no_credito=$this->id;
+                        }
+                        Credito::create([
+                            'no_credito'=>$this->no_credito,
+                            'venta_id'=>$data->id,
+                            'fecha_credito'=>$this->fecha_venta,
+                            'total_credito'=>$this->total_venta,
+                            'cliente_id'=>$this->cliente_id,
+                            'observaciones'=>$this->observaciones_credito,
+                        ]);
+
+
+
+
+
                         $this->alert('success', "Venta Realizada: $this->no_venta ", [
                             'position' => 'center',
                             'timer' => '3000',
@@ -593,28 +616,34 @@ public $email_edit=null, $codigo_edit=null;
                         $data=Venta::create(
                             [
                                 'cliente_id'=>$this->cliente_id,
+                                'saldo_credito_cliente'=>$this->saldo_credito,
 
                                 'no_venta'=>$this->no_venta,
                                 'fecha_venta'=>$this->fecha_venta,
                                 'hora_venta'=>Carbon::now()->toTimeString(),
                                 'total_venta'=>$this->total_venta,
                                 'observaciones_venta'=>$this->observaciones_venta,
-                                'saldo_credito'=>$this->saldo_credito,
 
-                                'sucursal_id'=>Auth::user()->sucursal_id,
+
                                 'forma_pago'=>$this->id_forma_pago,
+                                'efectivo'=>true,
+
+
+
+                                'saldo_cancelado'=>true,
+                                'fecha_saldo_cancelado'=>$this->fecha_venta,
+                                'saldo_total_venta'=>$saldo_venta,
+
+                                'credito'=>false,
+                                'no_credito'=>'',
+                                'total_credito'=>'0',
+                                'observaciones_credito'=>'',
+
+
                                 'envio'=>$this->id_envio,
                                 'estado_envio'=>$this->estado_envio,
 
-                                'efectivo'=>true,
-                                'cancelado'=>true,
-                                'fecha_cancelado'=>$this->fecha_venta,
-                                'saldo_venta'=>$saldo_venta,
-
-                                'credito'=>false,
-                                'no_credito'=>'0',
-                                'total_credito'=>'0',
-                                'observaciones_credito'=>'',
+                                'sucursal_id'=>Auth::user()->sucursal_id,
                             ]);
 
 

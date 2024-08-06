@@ -10,7 +10,8 @@ use App\Models\Venta;
 use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class NotaCreditoController extends Component
 {
@@ -39,6 +40,23 @@ class NotaCreditoController extends Component
 
     public $ventas=null;
 
+        /////////filtros
+        public $filtroNoNotaCredito=null;
+        public $filtroNoVenta=null;
+        public $filtroNombreCliente=null;
+        public $filtroCodigoCliente=null;
+        Public $filtroFechaNotaCredito=null;
+
+        public $nota_creditos=[];
+
+
+        public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+        public $abonos=[],$estado_cuentas=[],$total_abonos;
+
+        public $total_nota_creditos;
+        /////
+
+
     protected $rules = [
         'venta_id' => 'required',
         'cantidad_credito_actual'=>'required',
@@ -51,6 +69,29 @@ class NotaCreditoController extends Component
 
     public function render()
     {
+
+        $this->nota_creditos = DB::table('nota_creditos')
+        ->rightJoin('ventas','nota_creditos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+        ->where('nota_creditos.no_nota_credito','LIKE',"%{$this->filtroNoNotaCredito}%")
+        ->where('ventas.no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->where('nota_creditos.fecha_nota_credito','LIKE',"%{$this->filtroFechaNotaCredito}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->get();
+
+
+        $this->total_nota_creditos = DB::table('nota_creditos')
+        ->rightJoin('ventas','nota_creditos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+        ->where('nota_creditos.no_nota_credito','LIKE',"%{$this->filtroNoNotaCredito}%")
+        ->where('ventas.no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->where('nota_creditos.fecha_nota_credito','LIKE',"%{$this->filtroFechaNotaCredito}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->sum('nota_creditos.total_nota_credito');
+
+
         $data=NotaCredito::latest()->first();
 
         if ($data) {
@@ -81,10 +122,10 @@ class NotaCreditoController extends Component
         $this->venta_id=$venta->id;
         $this->fecha_venta=$venta->fecha_venta;
 
-        if ($venta->cancelado ===1) {
-            $this->total_venta=$venta->total_venta-$venta->total_nota_credito;
+        if ($venta->saldo_cancelado ===1) {
+            $this->total_venta=$venta->saldo_total_venta-$venta->total_nota_credito;
         }else{
-            $this->total_venta=$venta->saldo_venta;
+            $this->total_venta=$venta->saldo_total_venta;
         }
 
 
@@ -182,22 +223,20 @@ class NotaCreditoController extends Component
 
 }
 
-public function pdfExportar($id){
-
-    return redirect()->route('pdfExportarNotaCredito',$id);
-
+public function exportarGeneral()
+{
+    $fecha_reporte=Carbon::now()->toDateTimeString();
+    $pdf = Pdf::loadView('/livewire/pdf/pdfNotaCreditoGeneral',['nota_creditos' => $this->nota_creditos,'total_nota_creditos'=>$this->total_nota_creditos]);
+    return response()->streamDownload(function () use ($pdf) {
+        echo $pdf->setPaper('leter', 'landscape')->stream();
+        }, "$this->title-$fecha_reporte.pdf");
 }
 
 
 
-
-public function pdfExportarNotaCredito($id)
+public function exportarFila($id)
 {
 
-
-
-    $saldo_actual=0;
-    $saldo_anterior=0;
     $nota_credito=NotaCredito::with('venta')->find($id)->toArray();
 
 
@@ -207,26 +246,12 @@ public function pdfExportarNotaCredito($id)
 
     $cliente=Cliente::find($nota_credito['venta']['cliente_id'])->toArray();
 
-    //$user=User::find(1)->toArray();
-    //$saldo_anterior=$venta['saldo_credito'];
 
-    /*if ($venta['forma_pago']==='CREDI') {
-        $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
-
-        $saldo_actual=$saldo_anterior+$venta['total_venta'];
-    }else{
-        $saldo_anterior=0;
-        $saldo_actual=$venta['total_venta'];
-    }*/
-
-    $pdf = FacadePdf::loadView('/livewire/pdf/pdfNotaCredito',['venta' => $venta,'cliente'=>$cliente,'nota_credito'=>$nota_credito]);
-
-
-
-   // return $pdf->download("nota_credito_$no_venta.pdf");
-
-
-    return $pdf->stream();
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfNotaCredito',['venta' => $venta,'cliente'=>$cliente,'nota_credito'=>$nota_credito]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
 
 
 }
@@ -234,10 +259,13 @@ public function pdfExportarNotaCredito($id)
 
 
 
+
+
+
+
     public function anulacionVenta(){
         $this->disabled=true;
         $this->anulacion_venta=true;
-
     }
 
     public function delete($id){
@@ -299,15 +327,15 @@ public function pdfExportarNotaCredito($id)
         $data->delete();
 
 
-    $this->alert('error', 'Borrado exitosamente', [
-        'position' => 'center',
-        'timer' => '2000',
-        'toast' => true,
-        'showConfirmButton' => false,
-        'onConfirmed' => '',
-        'timerProgressBar' => true,
-        'text' => 'Registro borrado exitosamente',
-    ]);
+        $this->alert('error', 'Borrado exitosamente', [
+            'position' => 'center',
+            'timer' => '2000',
+            'toast' => true,
+            'showConfirmButton' => false,
+            'onConfirmed' => '',
+            'timerProgressBar' => true,
+            'text' => 'Registro borrado exitosamente',
+        ]);
 
 
 
@@ -326,10 +354,10 @@ public function pdfExportarNotaCredito($id)
                 );
 
 
-    };
+        };
 
-    $this->dispatch('pg:eventRefresh-default');
-    $this->cancel();
+        $this->dispatch('pg:eventRefresh-default');
+        $this->cancel();
 
     }
 

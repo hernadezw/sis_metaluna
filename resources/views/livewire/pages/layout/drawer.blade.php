@@ -25,9 +25,8 @@
             <x-frk.components.subitem_drawer label="compra" route="compra" />
         </x-frk.components.item_expanded_drawer>
 
-
-
         <x-frk.components.item_expanded_drawer label="Transporte y Logistica"  icon="fa-solid fa-truck-fast"  >
+            <x-frk.components.subitem_drawer label="cotizacion" route="historial_cotizacion" />
             <x-frk.components.subitem_drawer label="venta" route="venta" />
             <x-frk.components.subitem_drawer label="envio" route="envio" />
             <x-frk.components.subitem_drawer label="ruta" route="ruta" />
@@ -49,12 +48,7 @@
 
         </x-frk.components.item_expanded_drawer>
 
-        <x-frk.components.item_expanded_drawer label="Informes" icon="fa-solid fa-money-bill"  >
 
-            <x-frk.components.subitem_drawer label="cotizacion" route="historial_cotizacion" />
-
-
-        </x-frk.components.item_expanded_drawer>
 
 
 
@@ -63,8 +57,6 @@
             <x-frk.components.subitem_drawer label="sucursal" route="sucursal" />
             <x-frk.components.subitem_drawer label="proveedor" route="proveedor" />
         </x-frk.components.item_expanded_drawer>
-
-
     </div>
 </div>
 

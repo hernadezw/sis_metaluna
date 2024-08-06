@@ -8,7 +8,8 @@ use App\Models\Cliente;
 use App\Models\EstadoCuenta;
 use App\Models\Venta;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
@@ -37,10 +38,33 @@ class AbonoController extends Component
     public $asignar_venta_id=null;
     public $asignar_abono_anticipado_id=null;
 
-    public $ventas=null;
+
     public $ventas_credito=null;
+    public $isSearchVenta=false;
+    public $ventas=[];
+    public $no_venta=0;
+
+    public $search_no_venta,$search_nombres_cliente,$search_codigo_cliente;
 
     protected $listeners=['pdfExportar','delete'];
+
+
+    /////////filtros
+    public $filtroNoAbono=null;
+    public $filtroNoVenta=null;
+    public $filtroNombreCliente=null;
+    public $filtroCodigoCliente=null;
+    Public $filtroFechaAbono=null;
+
+    public $creditos=[];
+
+
+    public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+    public $abonos=[],$estado_cuentas=[],$total_abonos;
+    /////
+
+
+
 
     protected $rules = [
         'venta_id' => 'required',
@@ -52,6 +76,33 @@ class AbonoController extends Component
 
     public function render()
     {
+
+        $this->abonos = DB::table('abonos')
+        ->rightJoin('ventas','abonos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+        ->where('abonos.no_abono','LIKE',"%{$this->filtroNoAbono}%")
+        ->where('ventas.no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->where('abonos.fecha_abono','LIKE',"%{$this->filtroFechaAbono}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->get();
+
+
+        $this->total_abonos = DB::table('abonos')
+        ->rightJoin('ventas','abonos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+        ->where('abonos.no_abono','LIKE',"%{$this->filtroNoAbono}%")
+        ->where('ventas.no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->where('abonos.fecha_abono','LIKE',"%{$this->filtroFechaAbono}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->sum('abonos.total_abono');
+
+
+
+
+
+
 
         return view('livewire.pages.abono.index');
     }
@@ -69,12 +120,18 @@ class AbonoController extends Component
         }
 
         $this->tipo_pago=DataSistema::$forma_pago;
-
-        $this->ventas_credito=Venta::where('cancelado','0')->get();
+        $this->fecha_abono = Carbon::now()->toDateString();
+        $this->ventas_credito=Venta::where('saldo_cancelado','0')->get();
         $this->isCreate=true;
 
     }
 /////////////////////////////////BONO ANTICIPADO/////////////////////////////
+
+    public function buscarVenta(){
+    $this->isSearchVenta=true;
+    $this->isCreate=false;
+
+    }
 
     public function abonoAnticipado(){
         $data=Abono::latest()->first();
@@ -89,22 +146,10 @@ class AbonoController extends Component
         }
 
         $this->tipo_pago=DataSistema::$forma_pago;
-
+        $this->fecha_abono = Carbon::now()->toDateString();
         $this->clientes=Cliente::all();
         $this->isCreateAnticipado=true;
 
-    }
-
-
-
-    public function updatedVentaId($value){
-        $venta=Venta::find($value);
-        $this->cliente_id=$venta->cliente_id;
-        $this->correlativo=$venta->correlativo+1;
-        $this->id_venta=$venta->id;
-        $this->saldo_credito=$venta->saldo_venta;
-        $this->cantidad_credito_actual=$venta->saldo_venta;
-        $this->reset(['abono_anticipado_id','cantidad_abono','nuevo_saldo']);
     }
 
     public function updatedCantidadAbono($value){
@@ -113,14 +158,6 @@ class AbonoController extends Component
             ]);
         $this->nuevo_saldo=$this->saldo_credito-$value;
     }
-
-    public function pdfExportar($id){
-
-        return redirect()->route('pdfExportarAbono',$id);
-
-    }
-
-
 
     public function store()
     {
@@ -153,11 +190,11 @@ class AbonoController extends Component
         if($this->nuevo_saldo!=0){
             $venta=DB::table('ventas')
             ->where('id','=', $this->id_venta)
-            ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo]);
+            ->update(['correlativo'=>$this->correlativo,'saldo_total_venta'=>$this->nuevo_saldo]);
         }else{
             $venta=DB::table('ventas')
             ->where('id','=', $this->id_venta)
-            ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo,'cancelado'=>true, 'fecha_cancelado'=>$this->fecha_abono]);
+            ->update(['correlativo'=>$this->correlativo,'saldo_total_venta'=>$this->nuevo_saldo,'saldo_cancelado'=>true, 'fecha_saldo_cancelado'=>$this->fecha_abono]);
         };
 
         if(DB::table('estado_cuentas')->where('cliente_id',$this->cliente_id)->exists()){
@@ -179,6 +216,57 @@ class AbonoController extends Component
 
         $this->dispatch('pg:eventRefresh-default');
         $this->cancel();
+
+    }
+
+    public function agregarVenta($id)
+    {
+        $this->cancelarBuscarVenta();
+
+        $venta=Venta::find($id);
+        $this->no_venta=$venta->no_venta;
+        $this->cliente_id=$venta->cliente_id;
+        $this->correlativo=$venta->correlativo+1;
+        $this->id_venta=$venta->id;
+        $this->saldo_credito=$venta->saldo_total_venta;
+        $this->cantidad_credito_actual=$venta->saldo_total_venta ;
+        $this->reset(['abono_anticipado_id','cantidad_abono','nuevo_saldo']);
+    }
+
+
+    public function cancelarBuscarVenta(){
+        $this->isCreate=true;
+
+        $this->reset(['isSearchVenta','search_no_venta','search_codigo_cliente','search_nombres_cliente','ventas']);
+    }
+
+    public function updatedSearchNombresCliente($value){
+        $this->reset(['search_no_venta','search_codigo_cliente']);
+
+        $this->ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->where('nombres_cliente','LIKE',"%$value%")
+            ->where('saldo_cancelado','=',false)
+            ->get();
+    }
+
+    public function updatedSearchCodigoCliente($value){
+        $this->reset(['search_nombres_cliente','search_no_venta']);
+        $this->ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->where('codigo_mayorista','LIKE',"%$value%")
+            ->where('saldo_cancelado','=',false)
+            ->get();
+
+    }
+
+    public function updatedSearchNoVenta($value){
+        $this->reset(['search_nombres_cliente','search_codigo_cliente']);
+        $this->ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->where('no_venta','LIKE',"%$value%")
+            ->where('saldo_cancelado','=',false)
+            ->get();
 
     }
 
@@ -209,92 +297,81 @@ class AbonoController extends Component
         $this->cancel();
 
 
-}
-
-
+    }
 
 //////////////////////////////////ASIGNAR ABONO ANTICIPADO/////////////////////////////////////
-public function updatedAsignarVentaId($value){
+    public function updatedAsignarVentaId($value){
 
-    $venta=Venta::find($value);
+        $venta=Venta::find($value);
 
-    $this->cliente_id=$venta->cliente_id;
-    $this->correlativo=$venta->correlativo+1;
-    $this->id_venta=$venta->id;
-    $this->saldo_credito_asignar=$venta->saldo_venta;
-    $this->cantidad_credito_actual=$venta->saldo_venta;
-    $this->reset(['abono_anticipado_id','cantidad_abono','nuevo_saldo']);
-}
+        $this->cliente_id=$venta->cliente_id;
+        $this->correlativo=$venta->correlativo+1;
+        $this->id_venta=$venta->id;
+        $this->saldo_credito_asignar=$venta->saldo_venta;
+        $this->cantidad_credito_actual=$venta->saldo_venta;
+        $this->reset(['abono_anticipado_id','cantidad_abono','nuevo_saldo']);
+    }
 
-
-
-
-
-
-public function updatedAsignarAbonoAnticipadoId($value){
-    $data=Abono::find($value);
-    $this->cantidad_abono_asignar=$data->total_abono;
-    $this->nuevo_saldo_asignar=$this->saldo_credito_asignar-$this->cantidad_abono_asignar;
+    public function updatedAsignarAbonoAnticipadoId($value){
+        $data=Abono::find($value);
+        $this->cantidad_abono_asignar=$data->total_abono;
+        $this->nuevo_saldo_asignar=$this->saldo_credito_asignar-$this->cantidad_abono_asignar;
 
 
-}
+    }
+
+    public function storeAsignarAbonoAnticipado($value){
 
 
 
+        $data = Abono::find($value);
+        $data->update([
+                'venta_id'=>$this->id_venta,
+                'fecha_abono'=>$this->fecha_abono,
+                'saldo_credito'=>$this->saldo_credito_asignar,
+                'total_abono'=>$this->cantidad_abono_asignar,
+                'total_saldo'=>$this->nuevo_saldo_asignar,
+                'correlativo'=>$this->correlativo,
+                'observaciones'=>$this->observaciones,
+                'tipo_pago'=>$this->tipo_pago_id,
+                'no_pago'=>$this->no_pago,
+                'detalle_pago'=>$this->detalle_pago,
+                'abono_anticipado_asignado'=>true,
+            ]);
+
+        if($this->nuevo_saldo!=0){
+            $venta=DB::table('ventas')
+            ->where('id','=', $this->id_venta)
+            ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo]);
+        }else{
+            $venta=DB::table('ventas')
+            ->where('id','=', $this->id_venta)
+            ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo,'saldo_cancelado'=>true, 'fecha_saldo_cancelado'=>$this->fecha_abono]);
+        };
+
+        if(DB::table('estado_cuentas')->where('cliente_id',$this->cliente_id)->exists()){
+            $estado_cuenta_temp=EstadoCuenta::where('cliente_id',$this->cliente_id)->first();
+            $estado_cuenta=DB::table('estado_cuentas')
+            ->where('cliente_id','=', $this->cliente_id)
+            ->update(['total_abono' => $this->cantidad_abono+$estado_cuenta_temp->total_abono]);
 
 
-public function storeAsignarAbonoAnticipado($value){
-
-
-
-    $data = Abono::find($value);
-    $data->update([
-            'venta_id'=>$this->id_venta,
-            'fecha_abono'=>$this->fecha_abono,
-            'saldo_credito'=>$this->saldo_credito_asignar,
-            'total_abono'=>$this->cantidad_abono_asignar,
-            'total_saldo'=>$this->nuevo_saldo_asignar,
-            'correlativo'=>$this->correlativo,
-            'observaciones'=>$this->observaciones,
-            'tipo_pago'=>$this->tipo_pago_id,
-            'no_pago'=>$this->no_pago,
-            'detalle_pago'=>$this->detalle_pago,
-            'abono_anticipado_asignado'=>true,
-        ]);
-
-    if($this->nuevo_saldo!=0){
-        $venta=DB::table('ventas')
-        ->where('id','=', $this->id_venta)
-        ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo]);
-    }else{
-        $venta=DB::table('ventas')
-        ->where('id','=', $this->id_venta)
-        ->update(['correlativo'=>$this->correlativo,'saldo_venta'=>$this->nuevo_saldo,'cancelado'=>true, 'fecha_cancelado'=>$this->fecha_abono]);
-    };
-
-    if(DB::table('estado_cuentas')->where('cliente_id',$this->cliente_id)->exists()){
-        $estado_cuenta_temp=EstadoCuenta::where('cliente_id',$this->cliente_id)->first();
-        $estado_cuenta=DB::table('estado_cuentas')
-        ->where('cliente_id','=', $this->cliente_id)
-        ->update(['total_abono' => $this->cantidad_abono+$estado_cuenta_temp->total_abono]);
-
-
-    }else{
-        $data=EstadoCuenta::create(
-            [
-            'cliente_id'=>$this->cliente_id,
-            'total_abono'=>$this->cantidad_abono,
-            'total_credito'=>0,
-            ]
-            );
-    };
+        }else{
+            $data=EstadoCuenta::create(
+                [
+                'cliente_id'=>$this->cliente_id,
+                'total_abono'=>$this->cantidad_abono,
+                'total_credito'=>0,
+                ]
+                );
+        };
 
 
 
-    $this->dispatch('pg:eventRefresh-default');
-    $this->cancel();
+        $this->dispatch('pg:eventRefresh-default');
+        $this->cancel();
 
-}
+    }
 
 
     public function abonoAnticipadoAsignar(){
@@ -309,7 +386,7 @@ public function storeAsignarAbonoAnticipado($value){
             $this->no_abono=$this->id;
         }
         $this->tipo_pago=DataSistema::$forma_pago;
-        $this->ventas=Venta::where('cancelado','0')->get();
+        $this->ventas=Venta::where('saldo_cancelado','0')->get();
         $this->abono_anticipados=Abono::where('abono_anticipado',true)->where('abono_anticipado_asignado',false)->get();
         $this->isCreateAnticipadoAsignar=true;
     }
@@ -324,59 +401,36 @@ public function storeAsignarAbonoAnticipado($value){
 
 
 
-
-
-    public function pdfExportarAbono($id)
+    public function exportarGeneral()
     {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfAbonoGeneral',['abonos' => $this->abonos,'total_abonos'=>$this->total_abonos]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
+    }
 
-        $abono=Abono::with('venta')->find($id)->toArray();
-
-        $no_abono=$abono['no_abono'];
+    public function exportarFila($id)
+    {
+        $abono=Abono::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
         if($abono['venta_id']==null){
-
             $cliente=Cliente::find($abono['cliente_id'])->toArray();
-            $pdf = FacadePdf::loadView('/livewire/pdf/pdfAbonoAnticipado',['cliente'=>$cliente,'abono'=>$abono]);
-            //return $pdf->download("abono_$no_abono.pdf");
-
+            $fecha_reporte=Carbon::now()->toDateTimeString();
+            $pdf = Pdf::loadView('/livewire/pdf/pdfAbonoAnticipado',['cliente'=>$cliente,'abono'=>$abono]);
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->setPaper('leter')->stream();
+                }, "$this->title-$fecha_reporte.pdf");
         }else{
             $venta=Venta::find($abono['venta_id'])->toArray();
-            $no_venta=$abono['venta']['no_venta'];
             $cliente=Cliente::find($abono['venta']['cliente_id'])->toArray();
-            $pdf = FacadePdf::loadView('/livewire/pdf/pdfAbono',['venta' => $venta,'cliente'=>$cliente,'abono'=>$abono]);
-            //return $pdf->download("abono_$no_venta.pdf");
+            $fecha_reporte=Carbon::now()->toDateTimeString();
+            $pdf = Pdf::loadView('/livewire/pdf/pdfAbono',['venta' => $venta,'cliente'=>$cliente,'abono'=>$abono]);
+            return response()->streamDownload(function () use ($pdf) {
+                echo $pdf->setPaper('leter')->stream();
+                }, "$this->title-$fecha_reporte.pdf");
         }
-
-        return $pdf->stream();
-
-
-
-
-        //$user=User::find(1)->toArray();
-        //$saldo_anterior=$venta['saldo_credito'];
-
-        /*if ($venta['forma_pago']==='CREDI') {
-            $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
-
-            $saldo_actual=$saldo_anterior+$venta['total_venta'];
-        }else{
-            $saldo_anterior=0;
-            $saldo_actual=$venta['total_venta'];
-        }*/
-
-
-
-
-
-        //$pdf = Pdf::loadView('pdf.invoice', $data);
-
-
-        //return redirect()->route('pdfVentaRapida',$id);
-
-        //return $pdf->download('venta_pdf.pdf');
-        //return $pdf->stream();
-        //return $pdf->download('itsolutionstuff.pdf');
-
     }
+
 
     public function delete($id){
 
@@ -456,11 +510,11 @@ public function storeAsignarAbonoAnticipado($value){
             $data_venta = Venta::find($data->venta_id);
             $this->correlativo=$data_venta->correlativo-1;
 
-            if($data_venta->cancelado){
+            if($data_venta->saldo_cancelado){
                 $data_venta->update([
                     'correlativo'=>$this->correlativo,
                     'saldo_venta'=>$data->saldo_credito,
-                    'cancelado'=>false,
+                    'saldo_cancelado'=>false,
                 ]);
             }else{
                 $data_venta->update([

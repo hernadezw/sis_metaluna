@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up()
     {
-
+/*
         DB::unprepared('DROP TRIGGER IF EXISTS `agregar_credito`');
         DB::unprepared('CREATE TRIGGER agregar_credito AFTER INSERT ON ventas
             FOR EACH ROW
@@ -24,7 +24,7 @@ return new class extends Migration
                 VALUES (NEW.no_credito, NEW.id,NEW.fecha_venta,NEW.total_credito,NEW.cliente_id,NEW.observaciones_credito);
             END IF;
         END');
-
+*/
     /*
         while total > 0 do
                 SET sucursal_origen =(SELECT id FROM sucursals WHERE  prioridad=prioridad_contador);

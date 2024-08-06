@@ -2,23 +2,29 @@
 
 namespace App\Livewire;
 
+use App\Constantes\DataSistema;
 use App\Models\Cliente;
 use App\Models\EstadoCuenta;
+use App\Models\Ruta;
 use App\Models\Venta;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+
+use Illuminate\Support\Facades\DB;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 
 class VentaController extends Component
 {
     use LivewireAlert;
-    public $title='Detalle Venta';
+
+    public $title='Ventas';
     public $data, $id_data,$id_last;
     public $isCreate = false,$isEdit = false, $isShow = false, $isDelete = false,$isAddProduct=false,$disabled_nombre_producto=false,$disabled_existencia_producto=false,$disabled_codigo_producto=false,$disabled_subtotal_producto=false,$tipo_cliente;
     public $disabledInput=false,$disabledInputPasswordAdmin=false;
 
-
+    public $fecha_actual_registro;
     public $estadoShow,$estadoFalse="Inactivo",$estadoTrue="Habilitado";
     public $created_at,$updated_at,$disabled=false,$abono_venta;
 
@@ -43,10 +49,70 @@ class VentaController extends Component
     public $envio=false,$venta=null;
 
 
+
+    ///////////filtradooo
+
+    public $ventas=[];
+
+
+
+    public $filtroNoVenta;
+    public $filtroCodigoCliente=NULL;
+    public $filtroNombreCliente;
+    public $filtroFechaVenta;
+    public $filtroRuta;
+    public $filtroFormaPago;
+    public $filtroEnvio;
+    public $filtroTipoCliente;
+    public $filtroRutaCliente=null;
+
+    public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+
+    /////////////////////
+
+
     protected $listeners=['edit', 'delete','showDetalle','pdfExportar','envio'];
 
     public function render()
     {
+
+        $this->forma_pagos=DataSistema::$forma_pago;
+        $this->envios=DataSistema::$envio;
+        $this->tipo_clientes=DataSistema::$tipo_cliente;
+        $this->rutas=Ruta::all();
+
+        $this->ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->leftJoin('rutas','clientes.ruta_id','=','rutas.id')
+            ->where('no_venta','LIKE',"%{$this->filtroNoVenta}%")
+            ->where('nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+            ->where('codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+            ->where('fecha_venta','LIKE',"%{$this->filtroFechaVenta}%")
+            ->where('forma_pago','LIKE',"%{$this->filtroFormaPago}%")
+            ->where('envio','LIKE',"%{$this->filtroEnvio}%")
+            ->where('tipo_cliente','LIKE',"%{$this->filtroTipoCliente}%")
+            ->where('ruta_id','LIKE',"%{$this->filtroRutaCliente}%")
+            ->get();
+
+        $this->total_ventas = DB::table('ventas')
+            ->rightJoin('clientes','ventas.cliente_id','=','clientes.id')
+            ->leftJoin('rutas','clientes.ruta_id','=','rutas.id')
+            ->where('codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+            ->where('no_venta','LIKE',"%{$this->filtroNoVenta}%")
+            ->where('nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+            ->where('fecha_venta','LIKE',"%{$this->filtroFechaVenta}%")
+            ->where('forma_pago','LIKE',"%{$this->filtroFormaPago}%")
+            ->where('envio','LIKE',"%{$this->filtroEnvio}%")
+            ->where('tipo_cliente','LIKE',"%{$this->filtroTipoCliente}%")
+            ->where('ruta_id','LIKE',"%{$this->filtroRutaCliente}%")
+            ->sum('total_venta');
+
+
+
+
+
+
+
         return view('livewire.pages.venta.index');
     }
 
@@ -72,11 +138,7 @@ class VentaController extends Component
 
 
     }
-    public function pdfExportar($id){
 
-        return redirect()->route('pdfExportarVenta',$id);
-
-    }
 
 
     public function Envio($id){
@@ -118,22 +180,26 @@ class VentaController extends Component
 
     }
 
-
-    public function pdfExportarVenta($id)
+    public function exportarGeneral()
     {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfVentaGeneral',['ventas' => $this->ventas,'total_ventas'=>$this->total_ventas]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
+    }
+
+    public function exportarFila($id)
+    {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
         $saldo_actual=0;
         $saldo_anterior=0;
 
         $venta=Venta::with('productos')->find($id)->toArray();
-
         $no_venta=$venta['no_venta'];
-
-
-
         $cliente=Cliente::find($venta['cliente_id'])->toArray();
-
         //$user=User::find(1)->toArray();
-        $saldo_anterior=$venta['saldo_credito'];
+        $saldo_anterior=$venta['saldo_credito_cliente'];
 
         if ($venta['forma_pago']==='CREDI') {
             $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
@@ -144,21 +210,11 @@ class VentaController extends Component
             $saldo_actual=$venta['total_venta'];
         }
 
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfVentaRapida',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual]);
-
-
-
-        //$pdf = Pdf::loadView('pdf.invoice', $data);
-        //return $pdf->download("venta_$no_venta.pdf");
-        return $pdf->stream();
-        //return redirect()->route('pdfVentaRapida',$id);
-
-        //return $pdf->download('venta_pdf.pdf');
-        //return $pdf->stream();
-        //return $pdf->download('itsolutionstuff.pdf');
-
+        $pdf = Pdf::loadView('/livewire/pdf/pdfVenta',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
     }
-
 
     private function resetInputFields(){
         $this->reset(['isCreate','isEdit','isShow','isDelete','disabled','created_at','updated_at']);
@@ -171,7 +227,6 @@ class VentaController extends Component
     public function cancel(){
         $this->resetInputFields();
         $this->resetValidation();
-
     }
 }
 

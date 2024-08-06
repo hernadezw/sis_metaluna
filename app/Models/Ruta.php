@@ -11,7 +11,7 @@ class Ruta extends Model
     use HasFactory;
 
     protected $fillable = [
-        'codigo',
+    'codigo',
     'nombre',
     'descripcion',
 
@@ -28,6 +28,11 @@ public function Asignaciones(){
 public function Envio(){
     return $this->hasMany(Envio::class);
 }
+
+public function Clientes(){
+    // $this->belongsTo('App\Models\Rol');
+     return $this->hasMany(Cliente::class);
+ }
 
 public function Departamentos(){
     return $this->belongsToMany(Departamento::class)

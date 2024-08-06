@@ -13,23 +13,24 @@ class Venta extends Model
     protected $fillable = [
         'id',
         'cliente_id',
+        'saldo_credito_cliente',
 
         'no_venta',
         'fecha_venta',
         'hora_venta',
         'total_venta',
         'observaciones_venta',
-        'saldo_credito',
-
         'forma_pago',
+
         'efectivo',
 
-        'envio',
-        'estado_envio',
+
 
         'credito',
-        'total_credito',
         'no_credito',
+        'fecha_credito',
+        'total_credito',
+
         'observaciones_credito',
 
         'anulado',
@@ -39,19 +40,40 @@ class Venta extends Model
         'nota_credito',
         'fecha_nota_credito',
         'total_nota_credito',
+        'observaciones_nota_credito',
 
-        'cancelado',
-        'fecha_cancelado',
+        'saldo_cancelado',
+        'fecha_saldo_cancelado',
 
-        'saldo_venta',
+        'saldo_total_venta',
         'visible',
 
-        'sucursal_id',
-        'en_ruta',
-        'entregado',
+
+        'envio',
+        'estado_envio',
 
         'correlativo',
+
+
+        'sucursal_id',
+
+
+
+
+
     ];
+
+    public function Abonos(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->hasMany(Abono::class);
+     }
+
+     public function NotaCreditos(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->hasMany(NotaCredito::class);
+     }
+
+
 
     public function EstadoCuentas(){
         return $this->hasMany(EstadoCuenta::class);

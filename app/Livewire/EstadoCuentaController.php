@@ -2,9 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Constantes\DataSistema;
+use App\Models\Cliente;
 use App\Models\EstadoCuenta;
+use App\Models\Ruta;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+//use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EstadoCuentaController extends Component
 {
@@ -12,63 +18,64 @@ class EstadoCuentaController extends Component
     public $data, $id_data,$id_last;
     public $isCreate = false,$isEdit = false, $isShow = false, $isDelete = false,$isAddProduct=false,$disabled_nombre_producto=false,$disabled_existencia_producto=false,$disabled_codigo_producto=false,$disabled_subtotal_producto=false;
 
+
+
+    public $ventas=[];
+
+
+
+    public $filtroCodigoCliente=null;
+    public $filtroNombreCliente=null;
+    public $filtroClientes=null;
+    public $filtroTipoCliente=null;
+    public $filtroRutaCliente=null;
+
+    public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+    public $clientes=[],$estado_cuentas=[];
+
     public function render()
     {
+
+        $this->forma_pagos=DataSistema::$forma_pago;
+        $this->clientes=Cliente::all();
+        $this->envios=DataSistema::$envio;
+        $this->tipo_clientes=DataSistema::$tipo_cliente;
+        $this->rutas=Ruta::all();
+
+        $this->estado_cuentas = DB::table('estado_cuentas')
+        ->rightJoin('clientes','estado_cuentas.cliente_id','=','clientes.id')
+        ->leftJoin('rutas','clientes.ruta_id','=','rutas.id')
+        ->where('codigo_interno','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->where('codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->where('nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('tipo_cliente','LIKE',"%{$this->filtroTipoCliente}%")
+        ->where('ruta_id','LIKE',"%{$this->filtroRutaCliente}%")
+        ->get();
+
         return view('livewire.pages.estado_cuenta.index');
     }
 
-    public function exportarEstadoCuentaGeneral()
+    public function exportarGeneral()
     {
-        $id=0;
-        return redirect()->route('pdfExportarEstadoCuenta',$id);
+        $pdf = Pdf::loadView('/livewire/pdf/pdfEstadoCuentaVertical',['estado_cuenta' => $this->estado_cuentas]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, 'name.pdf');
     }
 
-    public function pdfExportar($id){
-        return redirect()->route('pdfExportarEstadoCuenta',$id);
-    }
-
-    public function pdfExportarEstadoCuenta($id)
+    public function exportarFila(string $id)
     {
 
-        $estado_cuenta=null;
+        $estado_cuenta = DB::table('estado_cuentas')
+        ->rightJoin('clientes','estado_cuentas.cliente_id','=','clientes.id')
+        ->leftJoin('rutas','clientes.ruta_id','=','rutas.id')
+        ->where('clientes.codigo_interno','LIKE',"%{$id}%")
+        ->get();
 
-
-        if($id==='0')
-        {
-            $estado_cuenta=EstadoCuenta::with('cliente')->get()->toArray();
-
-        }else{
-            $estado_cuenta=EstadoCuenta::find($id)->toArray();
-
-        }
-
-
-        //$user=User::find(1)->toArray();
-        //$saldo_anterior=$venta['saldo_credito'];
-
-        /*if ($venta['forma_pago']==='CREDI') {
-            $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
-
-            $saldo_actual=$saldo_anterior+$venta['total_venta'];
-        }else{
-            $saldo_anterior=0;
-            $saldo_actual=$venta['total_venta'];
-        }*/
-
-
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfEstadoCuentaVertical',['estado_cuenta' => $estado_cuenta]);
-
-
-
-        //$pdf = Pdf::loadView('pdf.invoice', $data);
-        return $pdf->setPaper('leter', 'landscape')->download("estado_cuenta_general.pdf");
-
-        //return redirect()->route('pdfVentaRapida',$id);
-
-        //return $pdf->download('venta_pdf.pdf');
-        //return $pdf->stream();
-        //return $pdf->download('itsolutionstuff.pdf');
-
+        $pdf = Pdf::loadView('/livewire/pdf/pdfEstadoCuentaVertical',['estado_cuenta' => $estado_cuenta]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, 'name.pdf');
     }
 
 

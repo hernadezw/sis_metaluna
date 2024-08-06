@@ -2,10 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Constantes\DataSistema;
 use App\Models\Cliente;
 use App\Models\Credito;
+use App\Models\Ruta;
 use Livewire\Component;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class CreditoController extends Component
 {
@@ -30,10 +36,48 @@ class CreditoController extends Component
         'alias' => 'required',
     ];
 
+
+
+
+
+    /////////filtros
+    public $filtroNoCredito=null;
+    public $filtroNombreCliente=null;
+    public $filtroCodigoCliente=null;
+    Public $filtroFechaCredito=null;
+
+    public $creditos=[];
+
+
+    public $forma_pagos,$envios,$tipo_clientes,$rutas,$total_ventas=0;
+    public $clientes=[],$estado_cuentas=[],$total_creditos;
+    /////
     protected $listeners=['edit', 'delete','show','pdfExportar'];
 
     public function render()
     {
+
+
+        $this->creditos = DB::table('creditos')
+        ->rightJoin('ventas','creditos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','creditos.cliente_id','=','clientes.id')
+        ->where('creditos.no_credito','LIKE',"%{$this->filtroNoCredito}%")
+        ->where('creditos.fecha_credito','LIKE',"%{$this->filtroFechaCredito}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->get();
+
+
+        $this->total_creditos = DB::table('creditos')
+        ->rightJoin('ventas','creditos.venta_id','=','ventas.id')
+        ->rightJoin('clientes','creditos.cliente_id','=','clientes.id')
+        ->where('creditos.no_credito','LIKE',"%{$this->filtroNoCredito}%")
+        ->where('creditos.fecha_credito','LIKE',"%{$this->filtroFechaCredito}%")
+        ->where('clientes.nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->where('clientes.codigo_mayorista','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->sum('creditos.total_credito');
+
+
         return view('livewire.pages.credito.index');
     }
 
@@ -72,24 +116,42 @@ class CreditoController extends Component
         $this->reset(['no_credito','venta_id','fecha_credito','total_credito','cliente_id','nombres_cliente','apellidos_cliente','observaciones','created_at','updated_at']);
     }
 
-    public function pdfExportar($id){
-        return redirect()->route('pdfExportarCredito',$id);
+
+
+
+    public function exportarGeneral()
+    {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfCreditoGeneral',['creditos' => $this->creditos,'total_creditos'=>$this->total_creditos]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
     }
 
-    public function pdfExportarCredito($id)
+    public function exportarFila($id)
     {
-
-        //$traslado=Traslado::with('productos')->find($id)->toArray();
+        $fecha_reporte=Carbon::now()->toDateTimeString();
         $credito=Credito::find($id)->toArray();
         $cliente=Cliente::find($credito['cliente_id'])->toArray();
 
-
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfCredito ',['credito'=>$credito,'cliente'=>$cliente]);
-            //return $pdf->download("abono_$no_abono.pdf");
-
-        return $pdf->stream();
-
-
+        $pdf = Pdf::loadView('/livewire/pdf/pdfCredito ',['credito'=>$credito,'cliente'=>$cliente]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

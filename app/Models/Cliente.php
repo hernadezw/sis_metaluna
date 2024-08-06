@@ -30,6 +30,7 @@ class Cliente extends Model
     'limite_credito',
     'dias_limite_credito',
     'tipo_cliente',
+    'ruta_id',
     'estado'];
 
 
@@ -43,6 +44,11 @@ class Cliente extends Model
      public function Municipio(){
         // $this->belongsTo('App\Models\Rol');
          return $this->belongsTo(Municipio::class);
+     }
+
+     public function Ruta(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->belongsTo(Ruta::class);
      }
 
      public function Ventas(){

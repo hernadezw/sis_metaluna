@@ -68,30 +68,33 @@
 </td>
 </tr>
 
-@foreach ($estado_cuenta as $item)
+@foreach ($estado_cuenta as $data)
+
 <tr style="height:13pt">
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-    <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['codigo_interno']}}</p>
+    <p style="text-indent: 0pt;text-align: left;">{{$data->codigo_interno}}</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-        <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['nombre_empresa']}}</p>
+        <p style="text-indent: 0pt;text-align: left;">{{$data->nombre_empresa}}</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-        <p style="text-indent: 0pt;text-align: left;">Q. {{$item['total_abono']}}</p>
+        <p style="text-indent: 0pt;text-align: left;">Q. {{$data->total_abono}}</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-        <p style="text-indent: 0pt;text-align: left;">Q. {{$item['total_credito']}}</p>
+        <p style="text-indent: 0pt;text-align: left;">Q. {{$data->total_credito}}</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-        <p style="text-indent: 0pt;text-align: left;">{{$item['cliente']['dias_limite_credito']}} Dias</p>
+        <p style="text-indent: 0pt;text-align: left;">{{$data->dias_limite_credito}} Dias</p>
     </td>
     <td style="width:140pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-        <p style="text-indent: 0pt;text-align: left;">Q. {{$item['total_credito']-$item['total_abono']}}</p>
+        <p style="text-indent: 0pt;text-align: left;">Q. {{$data->total_credito-$data->total_abono}}</p>
     </td>
 
 </tr>
 
 @endforeach
+
+
 </table>
 
 
