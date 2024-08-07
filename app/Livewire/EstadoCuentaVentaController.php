@@ -133,17 +133,7 @@ class EstadoCuentaVentaController extends Component
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->setPaper('leter')->stream();
             }, "$this->title-$fecha_reporte.pdf");
-
-
-        //$pdf = Pdf::loadView('pdf.invoice', $data);
         return $pdf->download("estado_cuenta_venta_$no_venta.pdf");
-
-        //return redirect()->route('pdfVentaRapida',$id);
-
-        //return $pdf->download('venta_pdf.pdf');
-        //return $pdf->stream();
-        //return $pdf->download('itsolutionstuff.pdf');
-
     }
 
 

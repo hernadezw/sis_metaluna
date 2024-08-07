@@ -30,6 +30,11 @@ class Vehiculo extends Model
         return $this->hasMany(Servicio::class);
     }
 
+    public function Combustibles(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->hasMany(Combustible::class);
+     }
+
     protected function estado(): Attribute {
         return new Attribute(
             get: fn (string $value) => $value==='1' ? true:false,

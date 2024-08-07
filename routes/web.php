@@ -14,6 +14,7 @@ use App\Livewire\MaterialController;
 use App\Livewire\ProductoController;
 use App\Livewire\TipoController;
 use App\Livewire\ClienteController;
+use App\Livewire\CombustibleController;
 use App\Livewire\CompraController;
 use App\Livewire\CotizacionController;
 use App\Livewire\CreditoController;
@@ -36,6 +37,7 @@ use App\Livewire\UsuarioController;
 use App\Livewire\VehiculoController;
 use App\Livewire\VentaController;
 use App\Livewire\VentaRapidaController;
+use App\Livewire\ViaticoController;
 use App\Models\AjusteInventario;
 use Illuminate\Support\Facades\DB;
 
@@ -140,6 +142,9 @@ Route::view('/', 'welcome');
 
         Route::get('informe_venta', InformeVentaController::class)->name('informe_venta');
         Route::get('informe_estado_cuenta', InformeEstadoCuentaController::class)->name('informe_estado_cuenta');
+
+        Route::get('combustible', CombustibleController::class)->name('combustible');
+        Route::get('viatico', ViaticoController::class)->name('viatico');
 
 
 

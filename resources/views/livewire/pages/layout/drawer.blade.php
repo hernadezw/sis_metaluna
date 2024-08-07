@@ -27,7 +27,7 @@
 
         <x-frk.components.item_expanded_drawer label="Transporte y Logistica"  icon="fa-solid fa-truck-fast"  >
             <x-frk.components.subitem_drawer label="cotizacion" route="historial_cotizacion" />
-            <x-frk.components.subitem_drawer label="venta" route="venta" />
+
             <x-frk.components.subitem_drawer label="envio" route="envio" />
             <x-frk.components.subitem_drawer label="ruta" route="ruta" />
             <x-frk.components.subitem_drawer label="vehiculo" route="vehiculo" />
@@ -36,13 +36,15 @@
 
 
         <x-frk.components.item_expanded_drawer label="Finanzas" icon="fa-solid fa-money-bill"  >
-
+            <x-frk.components.subitem_drawer label="venta" route="venta" />
             <x-frk.components.subitem_drawer label="credito" route="credito" />
             <x-frk.components.subitem_drawer label="abono" route="abono" />
             <x-frk.components.subitem_drawer label="nota credito" route="nota_credito" />
             <x-frk.components.subitem_drawer label="Estado cuenta Venta" route="estado_cuenta_venta" />
             <x-frk.components.subitem_drawer label="Estado Cuenta Cliente" route="estado_cuenta" />
             <x-frk.components.subitem_drawer label="cliente" route="cliente" />
+            <x-frk.components.subitem_drawer label="combustible" route="combustible" />
+            <x-frk.components.subitem_drawer label="viatico" route="viatico" />
 
 
 

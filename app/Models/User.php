@@ -73,7 +73,15 @@ class User extends Authenticatable
         ];
     }
 
+    public function Viaticos(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->hasMany(Viatico::class);
+     }
 
+     public function Combustibles(){
+        // $this->belongsTo('App\Models\Rol');
+         return $this->hasMany(Combustible::class);
+     }
 
     public function Asignacion(){
         return $this->belongsToMany(Asignacion::class);

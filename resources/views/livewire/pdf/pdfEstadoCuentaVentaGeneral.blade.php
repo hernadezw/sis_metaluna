@@ -25,9 +25,7 @@
         <td style="width:87pt">
     <p class="s2" style="padding-top: 7pt;padding-left: 2pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Usuario:</p>
 </td>
-<td style="width:198pt">
-    <p class="s2" style="padding-top: 7pt;padding-left: 56pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Fecha de Impresión:</p>
-</td>
+
 <td style="width:121pt">
     <p class="s2" style="padding-top: 7pt;padding-left: 75pt;text-indent: 0pt;line-height: 8pt;text-align: left;">Página 1 de 1</p>
 </td>
