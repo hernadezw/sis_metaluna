@@ -156,16 +156,27 @@ class CombustibleController extends Component
 
     public function exportarFila($id)
     {
-        $abono=Viatico::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
 
-            $cliente=Cliente::find($abono['cliente_id'])->toArray();
+        $dato=Combustible::with('user')
+        ->with('vehiculo')
+        ->where('no_combustible','LIkE',"%{$this->filtroNoCombustible}%")
+        ->where('fecha_combustible','LIkE',"%{$this->filtroFechaCombustible}%")
+        ->whereRelation('user','id','LIKE',"%{$this->filtroUsuario}%")
+        ->whereRelation('vehiculo','id','LIKE',"%{$this->filtroVehiculo}%")
+        ->first();
+
+
+        //$abono=Viatico::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
+
+            //$cliente=Cliente::find($abono['cliente_id'])->toArray();
             $fecha_reporte=Carbon::now()->toDateTimeString();
-            $pdf = Pdf::loadView('/livewire/pdf/pdfAbonoAnticipado',['cliente'=>$cliente,'abono'=>$abono]);
+            $pdf = Pdf::loadView('/livewire/pdf/pdfCombustible',['dato'=>$dato]);
             return response()->streamDownload(function () use ($pdf) {
                 echo $pdf->setPaper('leter')->stream();
                 }, "$this->title-$fecha_reporte.pdf");
 
     }
+
 
 
     public function delete($id){

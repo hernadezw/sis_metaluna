@@ -51,7 +51,7 @@
 
                         <td class="px-4 py-3 text-sm border">{{$data->fecha_viatico}}</td>
                          <td class="px-4 py-3 text-sm border flex w-full">
-                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf"  />
+                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf" wire:click="exportarFila({{$data->id}})" />
                         </td>
                     </tr>
                     @endforeach

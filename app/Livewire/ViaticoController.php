@@ -156,11 +156,21 @@ class ViaticoController extends Component
 
     public function exportarFila($id)
     {
-        $abono=Viatico::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
 
-            $cliente=Cliente::find($abono['cliente_id'])->toArray();
+        $dato=Viatico::with('user')
+        ->where('no_viatico','LIkE',"%{$this->filtroNoViatico}%")
+        ->where('fecha_viatico','LIkE',"%{$this->filtroFechaViatico}%")
+        ->whereRelation('user','codigo','LIKE',"%{$this->filtroCodigoUsuario}%")
+        ->whereRelation('user','nombres','LIKE',"%{$this->filtroNombreUsuario}%")
+        ->whereRelation('user','apellidos','LIKE',"%{$this->filtroApellidoUsuario}%")
+        ->first();
+
+
+        //$abono=Viatico::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
+
+            //$cliente=Cliente::find($abono['cliente_id'])->toArray();
             $fecha_reporte=Carbon::now()->toDateTimeString();
-            $pdf = Pdf::loadView('/livewire/pdf/pdfAbonoAnticipado',['cliente'=>$cliente,'abono'=>$abono]);
+            $pdf = Pdf::loadView('/livewire/pdf/pdfViatico',['dato'=>$dato]);
             return response()->streamDownload(function () use ($pdf) {
                 echo $pdf->setPaper('leter')->stream();
                 }, "$this->title-$fecha_reporte.pdf");

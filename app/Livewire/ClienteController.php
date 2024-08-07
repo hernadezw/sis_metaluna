@@ -6,6 +6,9 @@ use App\Constantes\DataSistema;
 use App\Models\Cliente;
 use App\Models\Departamento;
 use App\Models\Municipio;
+use App\Models\Ruta;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class ClienteController extends Component
@@ -17,7 +20,7 @@ class ClienteController extends Component
     public $created_at,$updated_at,$disabled=false;
     public $last_dep=false;
     public $codigotemp_dep,$codigotemp_mun,$codigotemp;
-    public $tipo_clientes=[];
+
 
     public $isDisabledMinorista=true;
 
@@ -44,12 +47,26 @@ class ClienteController extends Component
     $estado=true,
     $id=0;
 
+    public $clientes;
+    public $rutas;
+    public $tipo_clientes=[];
+
     ////disabled////////
     public $disabled_codigo_interno=false;
 
     public $departamentos=[], $municipios=[];
     public $departamento_id, $municipio_id;
     public $departamento,$municipio;
+
+
+
+
+    public $filtroCodigoInterno=null;
+    public $filtroCodigMayorista=null;
+    public $filtroTipoCliente=null;
+    public $filtroNombresCliente=null;
+    public $filtroApellidosCliente=null;
+    public $filtroRuta=null;
 
     protected $rules = [
         'nit' => 'required',
@@ -66,6 +83,19 @@ class ClienteController extends Component
 
     public function render()
     {
+
+        $this->clientes=Cliente::with('ruta')
+        ->where('codigo_interno','LIkE',"%{$this->filtroCodigoInterno}%")
+        ->where('codigo_mayorista','LIkE',"%{$this->filtroCodigMayorista}%")
+        ->where('tipo_cliente','LIkE',"%{$this->filtroTipoCliente}%")
+        ->where('nombres_cliente','LIkE',"%{$this->filtroNombresCliente}%")
+        ->where('apellidos_cliente','LIkE',"%{$this->filtroApellidosCliente}%")
+        ->whereRelation('ruta','id','LIKE',"%{$this->filtroRuta}%")
+        ->get();
+
+
+        $this->rutas=Ruta::all();
+        $this->tipo_clientes=DataSistema::$tipo_cliente;
         return view('livewire.pages.cliente.index');
     }
 
@@ -99,6 +129,30 @@ class ClienteController extends Component
             $this->codigo_mayorista=$data->codigo_mayorista+1;
         }
     }
+
+    public function exportarGeneral()
+    {
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfClienteGeneral',['clientes' => $this->clientes]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter', 'landscape')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
+    }
+
+
+
+    public function exportarFila($id)
+    {
+        $dato=Cliente::with('ruta')
+        ->where('id','=',$id)
+        ->first();
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfCliente',['dato' => $dato]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
+    }
+
 
 
 
@@ -309,20 +363,4 @@ class ClienteController extends Component
         $this->last_dep=true;
         $this->reset('municipio_id');
     }
-
-    /*
-    public function updatedDireccionMunicipio($value){
-        //$codigotemp=$this->codigo_interno_temp_dep;
-        $codigotemp_mun=Municipio::find($value);
-        $ultimo=Cliente::latest('id')->first();
-
-        if($ultimo===null){
-            $this->codigo_interno=$codigotemp.$codigotemp_mun->codigo.'1';
-        }else{
-            $this->codigo_interno=$this->codigo_internotemp.$codigotemp_mun->codigo.$ultimo->id;
-        }
-
-
-    }
-    */
 }

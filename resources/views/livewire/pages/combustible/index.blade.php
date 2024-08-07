@@ -5,7 +5,7 @@
                 <x-frk.components.title label="{{$title}}" />
                 <x-frk.components.button color="red" label="Exportar PDF" wire:click="exportarGeneral()" />
                 <x-frk.components.button label="agregar {{$title}}" wire:click="create()" />
-                </div>
+            </div>
             <div class="flex w-full">
                 <x-frk.components.label-input label="No Combustible" wire:model.live="filtroNoCombustible"/>
 
@@ -68,7 +68,7 @@
 
                         <td class="px-4 py-3 text-sm border">{{$data->fecha_combustible}}</td>
                          <td class="px-4 py-3 text-sm border flex w-full">
-                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf"  />
+                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf" wire:click="exportarFila({{$data->id}})" />
                         </td>
                     </tr>
                     @endforeach
@@ -88,6 +88,7 @@
           </div>
         </div>
     </section>
+
 
     </x-slot:body>
     <x-slot:footer>
