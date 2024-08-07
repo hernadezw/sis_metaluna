@@ -5,19 +5,16 @@ namespace App\Livewire;
 use App\Constantes\DataSistema;
 use App\Models\Abono;
 use App\Models\Cliente;
-use App\Models\Compra;
 use App\Models\Credito;
 use App\Models\EstadoCuenta;
 use App\Models\Marca;
 use App\Models\Material;
 use App\Models\Producto;
-use App\Models\Proveedor;
 use App\Models\Tipo;
 use App\Models\User;
 use App\Models\Venta;
-use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-//use Dompdf\Adapter\PDFLib;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -29,7 +26,7 @@ class VentaRapidaController extends Component
     ///sistema
     public $title='Venta';
     public $data, $id_data,$ultima_venta,$id=null;
-    public $isCreate=false, $isAddProduct=false, $isSearchProduct=false, $isVentaDetalle=false;
+    public $isCreate=false, $isAddProduct=false, $isSearchProduct=false, $isDetalleVenta=false;
 
     ////venta
     public $no_venta=null,$fecha_venta=null, $total_venta=0,$observaciones_venta=null,$forma_pago=null,$saldo_venta=0;
@@ -111,9 +108,18 @@ public $email_edit=null, $codigo_edit=null;
     public $search_nit_cliente=null;
     //////////////INDEX/////////////////
 
+
+
+    /////ventana confirmacion detalle para pdf
+
+    public $no_venta_detalle=null;
+    public $total_venta_detalle=null;
+    public $nombres_cliente_detalle=null;
+    public $apellidos_cliente_detalle=null;
+
     public function render(){
 
-        //$this->temp = Venta::all();
+
         $this->forma_pagos=DataSistema::$forma_pago;
         $this->envios=DataSistema::$envio;
         $ultima_venta=Venta::latest()->first();
@@ -132,11 +138,7 @@ public $email_edit=null, $codigo_edit=null;
         $this->disabledInput=true;
         return view('livewire.pages.venta_rapida.index');
     }
-
-
     /////////////BUSCAR CLIENTES//////////////
-
-
     public function searchCliente(){
         $this->isSearchCliente=true;
     }
@@ -157,71 +159,55 @@ public $email_edit=null, $codigo_edit=null;
 
     }
 
-
-
     /////////////////////// AGREAGR CLIENTE//////////
-
     public function agregarCliente($id){
-            $cliente=Cliente::find($id);
-            $this->cliente_id= $cliente->id;
-            $this->codigo= $cliente->codigo;
-            $this->nombre_empresa= $cliente->nombre_empresa;
-            $this->nombres_cliente= $cliente->nombres_cliente;
-            $this->apellidos_cliente= $cliente->apellidos_Cliente;
-            $this->nit= $cliente->nit;
-            $this->descuento= $cliente->descuento;
-            $this->direccion_fisica= $cliente->direccion_fisica;
-            $this->direccion_departamento= $cliente->direccion_departamento;
-            $this->direccion_municipio= $cliente->direccion_municipio;
+        $cliente=Cliente::find($id);
+        $this->cliente_id= $cliente->id;
+        $this->codigo= $cliente->codigo;
+        $this->nombre_empresa= $cliente->nombre_empresa;
+        $this->nombres_cliente= $cliente->nombres_cliente;
+        $this->apellidos_cliente= $cliente->apellidos_Cliente;
+        $this->nit= $cliente->nit;
+        $this->descuento= $cliente->descuento;
+        $this->direccion_fisica= $cliente->direccion_fisica;
+        $this->direccion_departamento= $cliente->direccion_departamento;
+        $this->direccion_municipio= $cliente->direccion_municipio;
 
+        if ($cliente->tipo_cliente!=1) {
+            $this->tipo_cliente='MAY';
+        }else{
+            $this->tipo_cliente='MIN';
+        }
 
-            if ($cliente->tipo_cliente!=1) {
-                $this->tipo_cliente='MAY';
-            }else{
-                $this->tipo_cliente='MIN';
-            }
+        $credito=EstadoCuenta::where('cliente_id','=',$id)->first();
+        if($credito){
+            $this->saldo_credito=$credito->total_credito-$credito->total_saldo;
 
-            $credito=EstadoCuenta::where('cliente_id','=',$id)->first();
-            if($credito){
-                $this->saldo_credito=$credito->total_credito-$credito->total_saldo;
+        $dataaa=DB::table('creditos')
+        ->select('fecha_credito')
+        ->where('cliente_id',2)
+        ->orderBy('fecha_credito', 'asc')
+        ->first();
+        $fechaPrimerCredito = Carbon::parse($dataaa->fecha_credito);
+        $fechaActual = Carbon::now();
+        $client=Cliente::where('nit','=',$id)->first();
 
-            $dataaa=DB::table('creditos')
-            ->select('fecha_credito')
-            ->where('cliente_id',2)
-            ->orderBy('fecha_credito', 'asc')
-            ->first();
-            $fechaPrimerCredito = Carbon::parse($dataaa->fecha_credito);
-
-
-
-            $fechaActual = Carbon::now();
-
-
-            $client=Cliente::where('nit','=',$id)->first();
-
-            $this->dias_ultimo_credito=(int) round($client->dias_limite_credito-$fechaPrimerCredito->diffInDays($fechaActual));
-
-            }else{
-                $this->saldo_credito=0;
-            }
-
-
-               $data=Abono::where('cliente_id','=',$id)->first();
-                if(!$data){
-                    $this->abono_anticipado=0;
-                }else{
-                    $this->abono_anticipado=$data->total_abono;
-                }
-
-                $this->reset(['isSearchCliente','search_nombres_cliente','search_codigo_cliente','search_nit_cliente','clientes']);
-
-
+        $this->dias_ultimo_credito=(int) round($client->dias_limite_credito-$fechaPrimerCredito->diffInDays($fechaActual));
+        }else{
+            $this->saldo_credito=0;
+        }
+        $data=Abono::where('cliente_id','=',$id)->first();
+        if(!$data){
+            $this->abono_anticipado=0;
+        }else{
+            $this->abono_anticipado=$data->total_abono;
+        }
+        $this->reset(['isSearchCliente','search_nombres_cliente','search_codigo_cliente','search_nit_cliente','clientes']);
     }
 
     public function cancelarBuscarCliente(){
         $this->reset(['isSearchCliente','search_nombres_cliente','search_codigo_cliente','search_nit_cliente','clientes']);
     }
-
 
     public function buscarCliente(){
         $this->validate(['buscar_nit'=>'numeric|required|min:00000|max:99999']);
@@ -479,7 +465,7 @@ public $email_edit=null, $codigo_edit=null;
 
     public function agregarDetalle($id){
         $this->validate(['subtotal_producto'=>'required',
-    'cantidad_producto'=>"numeric|required|min:1|max:$this->existencia_producto"]);
+        'cantidad_producto'=>"numeric|required|min:1|max:$this->existencia_producto"]);
 
         $this->productos=Producto::query()
         ->where('id','=',$id)
@@ -525,12 +511,9 @@ public $email_edit=null, $codigo_edit=null;
                 }
                 $data=null;
 
-                $id=0;
-                $credito=0;
                 $saldo_venta=0;
 
                 if ($this->productosDetalle!=[]) {
-
 
                     if ($this->id_forma_pago==="CREDI" ) {
                         if(EstadoCuenta::where('cliente_id',$this->cliente_id)->exists()){
@@ -569,7 +552,11 @@ public $email_edit=null, $codigo_edit=null;
                                     'saldo_total_venta'=>$saldo_venta
                                 ]);
 
-                            $id=$data->id;
+                                $this->no_venta_detalle=$data->no_venta;
+                                $this->total_venta_detalle=$data->total_venta;
+                                $this->nombres_cliente_detalle=$data->cliente->nombres_cliente;
+                                $this->apellidos_cliente_detalle=$data->cliente->apellidos_cliente;
+
                         foreach ($this->productosDetalle as $key => $value) {
                             $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
                         }
@@ -595,19 +582,10 @@ public $email_edit=null, $codigo_edit=null;
                         ]);
 
 
+                        $this->alertaNotificacion("store");
+                        $this->isDetalleVenta=true;
+                            //$this->reset();
 
-
-
-                        $this->alert('success', "Venta Realizada: $this->no_venta ", [
-                            'position' => 'center',
-                            'timer' => '3000',
-                            'toast' => true,
-                            'showConfirmButton' => false,
-                            'onConfirmed' => '',
-                            'timerProgressBar' => true,
-                           ]);
-                           $this->reset();
-                           return redirect()->route('pdfVentaRapida',$id);
                         }
                     }
 
@@ -624,11 +602,8 @@ public $email_edit=null, $codigo_edit=null;
                                 'total_venta'=>$this->total_venta,
                                 'observaciones_venta'=>$this->observaciones_venta,
 
-
                                 'forma_pago'=>$this->id_forma_pago,
                                 'efectivo'=>true,
-
-
 
                                 'saldo_cancelado'=>true,
                                 'fecha_saldo_cancelado'=>$this->fecha_venta,
@@ -639,40 +614,30 @@ public $email_edit=null, $codigo_edit=null;
                                 'total_credito'=>'0',
                                 'observaciones_credito'=>'',
 
-
                                 'envio'=>$this->id_envio,
                                 'estado_envio'=>$this->estado_envio,
 
                                 'sucursal_id'=>Auth::user()->sucursal_id,
                             ]);
 
+                            $this->no_venta_detalle=$data->no_venta;
+                            $this->total_venta_detalle=$data->total_venta;
+                            $this->nombres_cliente_detalle=$data->cliente->nombres_cliente;
+                            $this->apellidos_cliente_detalle=$data->cliente->apellidos_cliente;
 
-                            $id=$data->id;
                             foreach ($this->productosDetalle as $key => $value) {
                                 $data->productos()->attach($value['id'],['cantidad' => $value['cantidad_producto'],'precio_venta' => $value['precio_venta_producto'],'sub_total' => $value['subtotal_producto']]);
                             }
-                            $this->alert('success', "Venta Realizada: $this->no_venta ", [
-                                'position' => 'center',
-                                'timer' => '3000',
-                                'toast' => true,
-                                'showConfirmButton' => false,
-                                'onConfirmed' => '',
-                                'timerProgressBar' => true,
-                               ]);
-                               $this->reset();
-                               return redirect()->route('pdfVentaRapida',$id);
+                            $this->alertaNotificacion("store");
+                            $this->isDetalleVenta=true;
+
+                            //$this->reset();
+                               //return redirect()->route('pdfVentaRapida',$id);
                         }
                 }else {
-                    $this->alert('error', 'Error', [
-                        'position' => 'center',
-                        'timer' => '2000',
-                        'toast' => true,
-                        'showConfirmButton' => false,
-                        'onConfirmed' => '',
-                        'timerProgressBar' => true,
-                        'text' => 'Debe agregar producto',
-                    ]);
+                    $this->alertaNotificacion("error");
                 }
+
 
     }
 
@@ -706,36 +671,48 @@ public $email_edit=null, $codigo_edit=null;
     }
 
 ////////////////////////////PDF//////////////////////////
-    public function pdfVentaRapida($id)
+    public function cancel(){
+        $this->reset();
+        $this->cancelarBuscarProducto();
+        $this->cancelProductQuantity();
+
+    }
+
+    public function exportarGeneral($id)
     {
+
         $saldo_actual=0;
         $saldo_anterior=0;
-        $venta=Venta::with('productos')->find($id)->toArray();
-        $no_venta=$venta['no_venta'];
+        $venta=Venta::with('productos')->where('no_venta','=',$id)->first()->toArray();
+
+
         $cliente=Cliente::find($venta['cliente_id'])->toArray();
-        $saldo_anterior=$venta['saldo_credito'];
+        $saldo_anterior=$venta['saldo_credito_cliente'];
 
         if(EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->exists()){
             $data=EstadoCuenta::where('cliente_id','=',$venta['cliente_id'])->get();
 
             if ($venta['forma_pago']==="CREDI") {
                 $saldo_actual=$saldo_anterior+$venta['total_venta'];
-                $saldo_anterior=$venta['saldo_credito'];
+                $saldo_anterior=$venta['saldo_credito_cliente'];
             }else{
                 $saldo_actual=$venta['total_venta'];
-                $saldo_anterior=$venta['saldo_credito'];
+                $saldo_anterior=$venta['saldo_credito_cliente'];
             }
         }else{
             $saldo_anterior=0;
             $saldo_actual=$venta['total_venta'];
         }
 
-        $pdf = FacadePdf::loadView('/livewire/pdf/pdfVentaRapida',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual]);
-        return $pdf->stream();
 
 
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfVenta',['venta' => $venta,'cliente'=>$cliente,'saldo_anterior'=>$saldo_anterior,'saldo_actual'=>$saldo_actual]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
+            $this->reset();
     }
-
 
     public function cancelarBuscarProducto(){
         $this->reset(['isSearchProduct','buscar_producto','id_tipo','tipos','marcas','id_marca','materiales','id_material','productos']);
@@ -761,5 +738,6 @@ public $email_edit=null, $codigo_edit=null;
             'text' => 'Datos borrados correctamente',
            ]);
     }
+
 }
 

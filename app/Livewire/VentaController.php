@@ -174,7 +174,7 @@ class VentaController extends Component
             'text' => 'Envio cambiado correctamente',
            ]);
 
-           $this->dispatch('pg:eventRefresh-default');
+
            $this->cancel();
 
 

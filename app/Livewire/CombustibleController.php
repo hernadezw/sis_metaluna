@@ -9,10 +9,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Livewire\Component;
 
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 class CombustibleController extends Component
 
 {
-    //use LivewireAlert;
+    use LivewireAlert;
+
     public $title='Combustible';
     public $data, $id_venta=null,$id=null,$no_abono=0;
     public $isCreate = false,$isEdit = false, $isShow = false, $isDelete = false,$isCreateAnticipado = false,$isCreateAnticipadoAsignar = false;
@@ -51,13 +53,20 @@ class CombustibleController extends Component
     /////
 
 
+    //////DELETE///
+    public $delete_no=null;
+    public $delete_nombre=null;
+
+
 
 
     protected $rules = [
-        'venta_id' => 'required',
-        'cantidad_credito_actual'=>'required',
-        'cantidad_abono'=>'required',
-        'saldo_credito'=>'required'
+        'user_id' => 'required',
+        'vehiculo_id' => 'required',
+        'total_combustible'=>"numeric|required|min:1",
+        'fecha_combustible'=>'required',
+        'user_id'=>'required',
+        'vehiculo_id'=>'required',
     ];
 
 
@@ -120,13 +129,7 @@ class CombustibleController extends Component
 
     public function store()
     {
-        $this->validate([
-            'total_combustible'=>"numeric|required|min:1",
-            'fecha_combustible'=>'required',
-            'user_id'=>'required',
-            'vehiculo_id'=>'required',
-        ]);
-
+        $this->validate();
 
         $da=Combustible::create(
             [
@@ -138,11 +141,54 @@ class CombustibleController extends Component
                 'observaciones'=>$this->observaciones,
             ]
         );
-
+        $this->alertaNotificacion("store");
         $this->cancel();
-
     }
 
+
+    public function edit($id){
+        $this->users=User::all();
+        $this->vehiculos=Vehiculo::all();
+        $data = Combustible::find($id);
+        $this->id_data=$data->id;
+        $this->no_combustible = $data->no_combustible;
+        $this->fecha_combustible = $data->fecha_combustible;
+        $this->total_combustible = $data->total_combustible;
+        $this->user_id = $data->user_id;
+        $this->vehiculo_id = $data->vehiculo_id;
+        $this->observaciones = $data->observaciones;
+        $this->isEdit=true;
+    }
+
+    public function update($id){
+        $this->validate();
+        $data = Combustible::find($id);
+        $data->update([
+            'fecha_combustible'=>$this->fecha_combustible,
+            'total_combustible'=>$this->total_combustible,
+            'user_id'=>$this->user_id,
+            'vehiculo_id'=>$this->vehiculo_id,
+            'observaciones'=>$this->observaciones,
+        ]);
+        $this->alertaNotificacion("update");
+        $this->cancel();
+    }
+
+    public function delete($id){
+        $data = Combustible::find($id);
+        $this->delete_no=$data->no_combustible;
+        $this->delete_nombre=$data->total_combustible;
+        $this->id_data=$data->id;
+        $this->isDelete = true;
+    }
+
+    public function destroy($id)
+    {
+        $data = Combustible::find($id);
+        $data->delete();
+        $this->alertaNotificacion("destroy");
+        $this->cancel();
+    }
 
 
     public function exportarGeneral()
@@ -156,7 +202,6 @@ class CombustibleController extends Component
 
     public function exportarFila($id)
     {
-
         $dato=Combustible::with('user')
         ->with('vehiculo')
         ->where('no_combustible','LIkE',"%{$this->filtroNoCombustible}%")
@@ -164,65 +209,18 @@ class CombustibleController extends Component
         ->whereRelation('user','id','LIKE',"%{$this->filtroUsuario}%")
         ->whereRelation('vehiculo','id','LIKE',"%{$this->filtroVehiculo}%")
         ->first();
-
-
         //$abono=Viatico::where('no_abono','=',$id)->with('venta')->get()->first()->toArray();
-
-            //$cliente=Cliente::find($abono['cliente_id'])->toArray();
-            $fecha_reporte=Carbon::now()->toDateTimeString();
-            $pdf = Pdf::loadView('/livewire/pdf/pdfCombustible',['dato'=>$dato]);
-            return response()->streamDownload(function () use ($pdf) {
-                echo $pdf->setPaper('leter')->stream();
-                }, "$this->title-$fecha_reporte.pdf");
-
+        //$cliente=Cliente::find($abono['cliente_id'])->toArray();
+        $fecha_reporte=Carbon::now()->toDateTimeString();
+        $pdf = Pdf::loadView('/livewire/pdf/pdfCombustible',['dato'=>$dato]);
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->setPaper('leter')->stream();
+            }, "$this->title-$fecha_reporte.pdf");
     }
 
-
-
-    public function delete($id){
-
-
-        $data = Viatico::find($id);
-
-
-                    $this->isDelete = true;
-                    $this->no_abono=$data->no_abono;
-                    $this->id_data=$data->id;
-
-
-
-
-
-    }
-
-    public function destroy($id)
-    {
-        $data = Viatico::find($id);
-
-            $data->delete();
-
-
-        $this->alert('error', 'Borrado exitosamente', [
-            'position' => 'center',
-            'timer' => '2000',
-            'toast' => true,
-            'showConfirmButton' => false,
-            'onConfirmed' => '',
-            'timerProgressBar' => true,
-            'text' => 'Registro borrado exitosamente'
-        ]);
-
-
-
-
-        $this->dispatch('pg:eventRefresh-default');
-        $this->cancel();
-
-    }
 
     public function cancel(){
         $this->reset();
-
         $this->resetValidation();
     }
 

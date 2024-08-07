@@ -73,7 +73,7 @@ class ServicioController extends Component
             'estado'=>$this->estado]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -124,7 +124,7 @@ class ServicioController extends Component
             'estado'=>$this->estado
         ]);
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -138,7 +138,7 @@ class ServicioController extends Component
     public function destroy($rowId)
     {
         Servicio::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         $this->cancel();
     }

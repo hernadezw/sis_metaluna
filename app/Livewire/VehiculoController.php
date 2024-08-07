@@ -77,7 +77,7 @@ class VehiculoController extends Component
             ]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -159,7 +159,7 @@ class VehiculoController extends Component
         ]);
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -175,7 +175,7 @@ class VehiculoController extends Component
     {
 
         Vehiculo::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         //session()->flash('message', 'Post Deleted Successfully.');
         $this->cancel();

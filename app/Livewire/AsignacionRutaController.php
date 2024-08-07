@@ -134,7 +134,7 @@ class AsignacionRutaController extends Component
             $data->users()->attach($this->idDetalleUsuario);
             $data->vehiculos()->attach($this->idDetalleVehiculo);
     ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 

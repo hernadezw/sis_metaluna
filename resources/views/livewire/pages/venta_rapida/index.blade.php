@@ -31,9 +31,7 @@
                 </div>
 
 
-                <div class="flex w-full md:w-1/12">
-
-                </div>
+                <div class="flex w-full md:w-1/12"></div>
 
                 <div class="flex w-full md:w-2/12">
                     <x-frk.components.button label="Buscar Cliente" color="blue" wire:click="searchCliente()" />
@@ -228,9 +226,9 @@
         @if($isSearchProduct)
             @include('livewire.pages.venta_rapida.searchProduct')
         @endif
-        @if($isVentaDetalle)
-        @include('livewire.pages.venta_rapida.ventaDetalle')
-        @endif
+        @if($isDetalleVenta)
+        @include('livewire.pages.venta_rapida.detalleVenta')
+    @endif
 
 
     </x-slot:footer>

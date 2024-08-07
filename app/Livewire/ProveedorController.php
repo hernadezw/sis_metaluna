@@ -62,7 +62,7 @@ class ProveedorController extends Component
             ]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -131,7 +131,7 @@ class ProveedorController extends Component
         ]);
 
         $this->cancel();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->resetInputFields();
 
 
@@ -149,7 +149,7 @@ class ProveedorController extends Component
     {
 
         Proveedor::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 

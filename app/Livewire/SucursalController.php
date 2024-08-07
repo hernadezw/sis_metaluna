@@ -97,7 +97,7 @@ class SucursalController extends Component
             ]
         );
 
-        //$this->dispatch('pg:eventRefresh-default');
+        //
         $this->cancel();
 
     }
@@ -172,7 +172,7 @@ class SucursalController extends Component
             ]
         );
 
-        //$this->dispatch('pg:eventRefresh-default');
+        //
         $this->cancel();
     }
 
@@ -186,7 +186,7 @@ class SucursalController extends Component
     public function destroy($rowId)
     {
         Sucursal::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         $this->cancel();
     }

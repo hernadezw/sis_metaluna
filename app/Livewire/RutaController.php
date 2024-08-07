@@ -121,7 +121,7 @@ class RutaController extends Component
             $data->departamentos()->attach($value,['departamento_id' => $this->idDepartamento[$key],'municipio_id' => $this->idMunicipio[$key],'nombre_departamento' => $this->nombreDepartamento[$key],'nombre_municipio' => $this->nombreMunicipio[$key],'observaciones' => 'obbbbbbbbbb']);
         }
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
 

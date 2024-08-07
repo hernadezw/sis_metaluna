@@ -67,8 +67,10 @@
                         <td class="px-4 py-3 text-sm border">{{$data->total_combustible}}</td>
 
                         <td class="px-4 py-3 text-sm border">{{$data->fecha_combustible}}</td>
-                         <td class="px-4 py-3 text-sm border flex w-full">
-                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf" wire:click="exportarFila({{$data->id}})" />
+                        <td class="px-4 py-3 text-sm border flex w-full">
+                            <x-frk.components.button-icon color="yellow" icon="fa-solid fa-eye" wire:click="exportarFila({{$data->id}})" />
+                            <x-frk.components.button-icon color="green" icon="fa-solid fa-pencil" wire:click="edit({{$data->id}})" />
+                            <x-frk.components.button-icon color="red" icon="fa-solid fa-trash" wire:click="delete({{$data->id}})" />
                         </td>
                     </tr>
                     @endforeach

@@ -119,7 +119,7 @@ class AjusteInventarioController extends Component
         Producto::find($this->producto_id)
                 ->update(['existencia' => $da]);
 
-            $this->dispatch('pg:eventRefresh-default');
+
             $this->cancel();
     }
 
@@ -168,7 +168,7 @@ public function destroy($rowId)
 
     $data->delete();
 
-    $this->dispatch('pg:eventRefresh-default');
+
     $this->cancel();
 
 }

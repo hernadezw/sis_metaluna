@@ -128,7 +128,7 @@ class UsuarioController extends Component
         $user->roles()->sync($this->role_id);
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -252,7 +252,7 @@ class UsuarioController extends Component
 
         $data->roles()->sync($this->role_id);
        // $this->alert('success', 'Registro completo');
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -266,7 +266,7 @@ class UsuarioController extends Component
     public function destroy($rowId){
 
         User::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
        // $this->alert('error', 'Registro eliminado');
         $this->cancel();

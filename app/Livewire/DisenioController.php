@@ -49,7 +49,7 @@ class DisenioController extends Component
             ]
         );
     ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -89,7 +89,7 @@ class DisenioController extends Component
             'estado'=>$this->estado
         ]);
     ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -107,7 +107,7 @@ class DisenioController extends Component
     ////////////////////
        Disenio::find($rowId)->delete();
     ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
 
         $this->cancel();
 

@@ -10,9 +10,11 @@ use App\Models\Ruta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Livewire\Component;
+use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class ClienteController extends Component
 {
+    use LivewireAlert;
     public $title='Cliente';
     public $data, $id_data;
     public $isCreate = false,$isEdit = false, $isShow = false, $isDelete = false;
@@ -68,6 +70,10 @@ class ClienteController extends Component
     public $filtroApellidosCliente=null;
     public $filtroRuta=null;
 
+      //////DELETE///
+      public $delete_no=null;
+      public $delete_nombre=null;
+
     protected $rules = [
         'nit' => 'required',
         'tipo_cliente_id' => 'required',
@@ -101,8 +107,7 @@ class ClienteController extends Component
 
     public function create(){
 
-        $data=Cliente::latest()->first();
-        if ( $data) {
+        if ($data=Cliente::latest()->first()) {
             $this->id=$data->id+1;
             $this->codigo_interno=$this->id;
 
@@ -153,18 +158,8 @@ class ClienteController extends Component
             }, "$this->title-$fecha_reporte.pdf");
     }
 
-
-
-
     public function store(){
-        $this->validate([
-            'tipo_cliente_id' => 'required',
-            'nombres_cliente' => 'required',
-            'telefono_principal' => 'required',
-            'direccion_fisica' => 'required',
-            'direccion_departamento' => 'required',
-            'direccion_municipio' => 'required',]);
-
+        $this->validate();
 
             if($this->tipo_cliente_id!='MAYO')
             {
@@ -200,18 +195,12 @@ class ClienteController extends Component
             'estado'=>$this->estado
             ]
         );
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
 
-    public function delete($rowId){
-        $data = Cliente::find($rowId);
-        $this->id_data=$data->id;
-        $this->codigo_interno = $data->codigo_interno;
-        $this->nombre_empresa = $data->nombre_empresa;
-        $this->isDelete = true;
-    }
+
 
     public function edit($rowId){
         $data = Cliente::find($rowId);
@@ -221,6 +210,7 @@ class ClienteController extends Component
 
         $this->id_data=$data->id;
         $this->codigo_interno = $data->codigo_interno;
+        $this->codigo_mayorista = $data->codigo_mayorista;
         $this->nombre_empresa = $data->nombre_empresa;
         $this->nombres_cliente = $data->nombres_cliente;
         $this->apellidos_cliente = $data->apellidos_cliente;
@@ -253,7 +243,7 @@ class ClienteController extends Component
 
         $this->isEdit = true;
     }
-
+    /*
     public function show($rowId){
         $data = Cliente::find($rowId);
         $this->tipo_clientes=DataSistema::$tipo_cliente;
@@ -296,18 +286,11 @@ class ClienteController extends Component
         $this->isShow=true;
 
     }
+        */
 
-    public function update(){
-        $this->validate([
-            'tipo_cliente_id' => 'required',
-            'nombres_cliente' => 'required',
-            'telefono_principal' => 'required',
-            'direccion_fisica' => 'required',
-            'direccion_departamento' => 'required',
-            'direccion_municipio' => 'required',]);
-
-        $data = Cliente::find($this->id_data);
-        $data->update([
+    public function update($id){
+        $this->validate();
+        Cliente::find($id)->update([
             'codigo_interno'=> $this->codigo_interno,
             'codigo_mayorista'=> $this->codigo_mayorista,
             'nombre_empresa'=> $this->nombre_empresa,
@@ -329,17 +312,23 @@ class ClienteController extends Component
             'tipo_cliente'=>$this->tipo_cliente_id,
             'estado'=>$this->estado
         ]);
-
-
-        $this->dispatch('pg:eventRefresh-default');
+        $this->alertaNotificacion("update");
         $this->cancel();
-
     }
-    public function destroy($rowId)
+
+    public function delete($id){
+        $data = Cliente::find($id);
+        $this->id_data=$data->id;
+        $this->delete_no= $data->codigo_interno;
+        $this->delete_nombre= $data->nombres_cliente;
+        $this->isDelete = true;
+    }
+
+
+    public function destroy($id)
     {
-        Cliente::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
-        $this->isDelete = false;
+        Cliente::find($id)->delete();
+        $this->alertaNotificacion("destroy");
         $this->cancel();
     }
 

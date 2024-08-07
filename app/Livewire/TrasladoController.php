@@ -315,7 +315,7 @@ class TrasladoController extends Component
 
 
         ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
     public function edit($rowId){
@@ -385,7 +385,7 @@ class TrasladoController extends Component
         }
         $data->delete();
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 

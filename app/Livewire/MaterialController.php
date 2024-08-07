@@ -49,7 +49,7 @@ class MaterialController extends Component
             ]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -91,7 +91,7 @@ class MaterialController extends Component
         ]);
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -107,7 +107,7 @@ class MaterialController extends Component
     {
 
         Material::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         //session()->flash('message', 'Post Deleted Successfully.');
         $this->cancel();

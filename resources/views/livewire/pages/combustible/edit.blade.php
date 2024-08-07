@@ -4,7 +4,7 @@
             <x-frk.components.title label="Editar {{$title}}" />
         </x-slot>
         <x-slot:body>
-            @include('livewire.pages.viatico.form')
+            @include('livewire.pages.combustible.form')
         </x-slot>
         <x-slot:footer>
             <x-frk.components.button label="editar" wire:click.prevent="update({{$id_data}})" />

@@ -47,7 +47,7 @@ class TipoController extends Component
             'estado'=>$this->estado
             ]
         );
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -84,7 +84,7 @@ class TipoController extends Component
             'descripcion'=>$this->descripcion,
             'estado'=>$this->estado
         ]);
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -99,7 +99,7 @@ class TipoController extends Component
     {
 
         Tipo::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         session()->flash('message', 'Post Deleted Successfully.');
         $this->cancel();

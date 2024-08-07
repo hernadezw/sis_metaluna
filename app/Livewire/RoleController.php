@@ -58,7 +58,7 @@ class RoleController extends Component
         $role->permissions()->sync($this->role_selected);
 
        // $this->alert('success', 'Registro completo');
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -105,7 +105,7 @@ class RoleController extends Component
         $data->permissions()->sync($this->role_selected);
 
         $this->alert('success', 'Registro completo');
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -120,7 +120,7 @@ class RoleController extends Component
     {
 
         Role::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         //$this->alert('error', 'Registro eliminado');
         $this->isDelete = false;
         $this->cancel();

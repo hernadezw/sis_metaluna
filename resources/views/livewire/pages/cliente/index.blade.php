@@ -1,11 +1,10 @@
 <x-frk.components.template-index>
     <x-slot:head>
-
     <div class="w-full">
         <div class="flex w-full">
             <x-frk.components.title label="{{$title}}" />
-            <x-frk.components.button color="red" label="Exportar PDF" wire:click="exportarGeneral()" />
             <x-frk.components.button label="agregar {{$title}}" wire:click="create()" />
+            <x-frk.components.button-icon label="exportar" color="red" icon="fa-solid fa-file-pdf" wire:click="exportarGeneral()" />
         </div>
         <div class="flex w-full">
             <x-frk.components.label-input label="Codigo Interno" wire:model.live="filtroCodigoInterno"/>
@@ -25,16 +24,8 @@
             </x-forms.select>
         </div>
     </div>
-
-
-
-
     </x-slot:head>
     <x-slot:body>
-
-
-
-
 
     <section class="container mx-auto p-6 font-mono">
         <div class="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
@@ -79,7 +70,9 @@
                         </td>
 
                         <td class="px-4 py-3 text-sm border flex w-full">
-                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf" wire:click="exportarFila({{$data->id}})" />
+                            <x-frk.components.button-icon color="yellow" icon="fa-solid fa-eye" wire:click="exportarFila({{$data->id}})" />
+                            <x-frk.components.button-icon color="green" icon="fa-solid fa-pencil" wire:click="edit({{$data->id}})" />
+                            <x-frk.components.button-icon color="red" icon="fa-solid fa-trash" wire:click="delete({{$data->id}})" />
                         </td>
 
                     </tr>

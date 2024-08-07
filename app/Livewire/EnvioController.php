@@ -229,7 +229,7 @@ public $array = array(
         }
 
     ////////////////////
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->reset();
     }
 
@@ -288,7 +288,7 @@ public $array = array(
 
 
         ////////////////////
-            $this->dispatch('pg:eventRefresh-default');
+
             $this->cancel();
 
     }

@@ -68,7 +68,7 @@ class CuentaCobrarController extends Component
                         ]
                     );
                     # code...
-                    $this->dispatch('pg:eventRefresh-default');
+
                     $this->cancel();
     }
 

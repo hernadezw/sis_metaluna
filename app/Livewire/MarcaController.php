@@ -44,7 +44,7 @@ class MarcaController extends Component
             'estado'=>$this->estado]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -83,7 +83,7 @@ class MarcaController extends Component
             'estado'=>$this->estado
         ]);
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
     }
 
@@ -97,7 +97,7 @@ class MarcaController extends Component
     public function destroy($rowId)
     {
         Marca::find($rowId)->delete();
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         $this->cancel();
     }

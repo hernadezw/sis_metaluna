@@ -214,7 +214,7 @@ class AbonoController extends Component
         };
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -293,7 +293,7 @@ class AbonoController extends Component
             ]
         );
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
 
@@ -368,7 +368,7 @@ class AbonoController extends Component
 
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -555,7 +555,7 @@ class AbonoController extends Component
             };
         };
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }

@@ -218,7 +218,7 @@ class NotaCreditoController extends Component
 
 
     };
-    $this->dispatch('pg:eventRefresh-default');
+
     $this->cancel();
 
 }
@@ -356,7 +356,7 @@ public function exportarFila($id)
 
         };
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }

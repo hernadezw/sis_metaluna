@@ -165,7 +165,7 @@ class CompraController extends Component
 
         }
         $this->cancel();
-        $this->dispatch('pg:eventRefresh-default');
+
 
     }
 
@@ -273,7 +273,7 @@ class CompraController extends Component
 
         $data->delete();
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }

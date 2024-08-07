@@ -94,7 +94,7 @@ class ProductoController extends Component
             'estado'=>$this->estado
             ]
         );
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -208,7 +208,7 @@ class ProductoController extends Component
 
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->cancel();
 
     }
@@ -258,7 +258,7 @@ class ProductoController extends Component
 
 
 
-        $this->dispatch('pg:eventRefresh-default');
+
         $this->isDelete = false;
         $this->cancel();
 
