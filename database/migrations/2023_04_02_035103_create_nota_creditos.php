@@ -24,7 +24,8 @@ return new class extends Migration
             $table->float('total_saldo')->comment('saldo de la venta despues de aplicado la nota de credito');
             $table->integer('correlativo')->default('0')->comment('correlativo para el seguimiento de las operaciones de abono y notas de credito');
             $table->boolean('anulacion_venta')->default(false)->nullable(true);
-            $table->integer('cliente_id')->nullable(true);
+            $table->unsignedBigInteger('cliente_id')->nullable(true);
+            $table->foreign('cliente_id')->references('id')->on('clientes');
             $table->string('observaciones')->nullable(true);
             $table->timestamps();
         });

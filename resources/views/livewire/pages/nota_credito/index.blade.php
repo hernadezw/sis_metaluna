@@ -38,6 +38,7 @@
                     <th class="px-4 py-3">Codigo Cliente</th>
                     <th class="px-4 py-3">Total Abono</th>
                     <th class="px-4 py-3">Fecha Abono</th>
+                    <th class="px-4 py-3">Observaciones</th>
 
                     <th class="px-4 py-3">Acciones</th>
 
@@ -48,19 +49,22 @@
                     @foreach ($nota_creditos as $data)
                     <tr class="text-gray-700">
                         <td class="px-4 py-3 text-ms font-semibold border">{{$data->no_nota_credito}}</td>
-                        <td class="px-4 py-3 text-sm border">{{$data->no_venta}}</td>
+                        <td class="px-4 py-3 text-sm border">{{$data->venta->no_venta}}</td>
 
                         <td class="px-4 py-3 border">
-                            <p class="text-xs text-gray-600">{{$data->nombres_cliente}} Telefono {{$data->telefono_principal}}</p>
+                            <p class="text-xs text-gray-600">{{$data->cliente->nombres_cliente}} Telefono {{$data->cliente->telefono_principal}}</p>
                         </td>
-                        <td class="px-4 py-3 text-sm border">{{$data->codigo_mayorista}}</td>
+                        <td class="px-4 py-3 text-sm border">{{$data->cliente->codigo_mayorista}}</td>
 
                         <td class="px-4 py-3 text-sm border">{{$data->total_nota_credito}}</td>
 
                         <td class="px-4 py-3 text-sm border">{{$data->fecha_nota_credito}}</td>
+                        <td class="px-4 py-3 text-sm border">{{$data->observaciones}}</td>
                          <td class="px-4 py-3 text-sm border flex w-full">
-                            <x-frk.components.button-icon color="red" icon="fa-solid fa-file-pdf" wire:click="exportarFila({{$data->no_nota_credito }})" />
-                        </td>
+                            <td class="px-4 py-3 text-sm border flex w-full">
+                                <x-frk.components.button-icon color="yellow" icon="fa-solid fa-eye" wire:click="exportarFila({{$data->no_nota_credito}})" />
+                                <x-frk.components.button-icon color="red" icon="fa-solid fa-trash" wire:click="delete({{$data->id}})" />
+                            </td>                        </td>
                     </tr>
                     @endforeach
                     <tr>
@@ -82,6 +86,9 @@
 
     </x-slot:body>
     <x-slot:footer>
+        @if($isSearchVenta)
+            @include('livewire.pages.nota_credito.searchVenta')
+        @endif
         @if($isCreate)
             @include('livewire.pages.nota_credito.create')
         @endif
