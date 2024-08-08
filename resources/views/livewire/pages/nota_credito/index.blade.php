@@ -36,8 +36,8 @@
 
                     <th class="px-4 py-3">Nombre Cliente</th>
                     <th class="px-4 py-3">Codigo Cliente</th>
-                    <th class="px-4 py-3">Total Abono</th>
-                    <th class="px-4 py-3">Fecha Abono</th>
+                    <th class="px-4 py-3">Total Nota Credito</th>
+                    <th class="px-4 py-3">Fecha Nota Credito</th>
                     <th class="px-4 py-3">Observaciones</th>
 
                     <th class="px-4 py-3">Acciones</th>
@@ -54,7 +54,7 @@
                         <td class="px-4 py-3 border">
                             <p class="text-xs text-gray-600">{{$data->cliente->nombres_cliente}} Telefono {{$data->cliente->telefono_principal}}</p>
                         </td>
-                        <td class="px-4 py-3 text-sm border">{{$data->cliente->codigo_mayorista}}</td>
+                        <td class="px-4 py-3 text-sm border">{{$data->cliente->codigo_interno}}</td>
 
                         <td class="px-4 py-3 text-sm border">{{$data->total_nota_credito}}</td>
 
@@ -62,7 +62,7 @@
                         <td class="px-4 py-3 text-sm border">{{$data->observaciones}}</td>
                          <td class="px-4 py-3 text-sm border flex w-full">
                             <td class="px-4 py-3 text-sm border flex w-full">
-                                <x-frk.components.button-icon color="yellow" icon="fa-solid fa-eye" wire:click="exportarFila({{$data->no_nota_credito}})" />
+                                <x-frk.components.button-icon color="yellow" icon="fa-solid fa-eye" wire:click="exportarFila({{$data->id}})" />
                                 <x-frk.components.button-icon color="red" icon="fa-solid fa-trash" wire:click="delete({{$data->id}})" />
                             </td>                        </td>
                     </tr>

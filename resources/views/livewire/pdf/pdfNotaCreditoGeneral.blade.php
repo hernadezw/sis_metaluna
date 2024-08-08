@@ -56,7 +56,7 @@
     <p class="s1" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Fecha Nota Credito</p>
 </td>
 <td style="width:67pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#FAE3D4">
-    <p class="s1" style="text-indent: 0pt;line-height: 12pt;text-align: center;"></p>
+    <p class="s1" style="text-indent: 0pt;line-height: 12pt;text-align: center;">Observaciones</p>
 </td>
 <td style="width:67pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" bgcolor="#FAE3D4">
     <p class="s1" style="text-indent: 0pt;line-height: 12pt;text-align: center;"></p>
@@ -77,13 +77,13 @@
         <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->no_nota_credito}}</p>
         </td>
         <td style="width:92pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->no_venta}}</p>
+            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->venta->no_venta}}</p>
         </td>
         <td style="width:75pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->nombres_cliente}}</p>
+            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->cliente->nombres_cliente}}</p>
         </td>
         <td style="width:77pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->codigo_mayorista}}</p>
+            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->cliente->codigo_interno}}</p>
         </td>
         <td style="width:72pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
             <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->total_nota_credito}}</p>
@@ -92,7 +92,7 @@
             <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->fecha_nota_credito}}</p>
         </td>
         <td style="width:67pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
-            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;"></p>
+            <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;">{{$data->observaciones}}</p>
         </td>
         <td style="width:67pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
             <p class="s3" style="padding-left: 5pt;text-indent: 0pt;line-height: 12pt;text-align: left;"></p>

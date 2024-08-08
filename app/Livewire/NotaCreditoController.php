@@ -90,7 +90,26 @@ class NotaCreditoController extends Component
         ->sum('nota_creditos.total_nota_credito');
 
 */
-        $this->nota_creditos=NotaCredito::with('venta')->with('cliente')->get();
+
+
+
+
+        $this->nota_creditos=NotaCredito::with('venta')->with('cliente')
+        ->where('no_nota_credito','LIkE',"%{$this->filtroNoNotaCredito}%")
+        ->where('fecha_nota_credito','LIkE',"%{$this->filtroFechaNotaCredito}%")
+        ->whereRelation('venta','no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->whereRelation('cliente','codigo_interno','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->whereRelation('cliente','nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+
+        ->get();
+
+        $this->total_nota_credito=NotaCredito::with('venta')->with('cliente')
+        ->where('no_nota_credito','LIkE',"%{$this->filtroNoNotaCredito}%")
+        ->where('fecha_nota_credito','LIkE',"%{$this->filtroFechaNotaCredito}%")
+        ->whereRelation('venta','no_venta','LIKE',"%{$this->filtroNoVenta}%")
+        ->whereRelation('cliente','codigo_interno','LIKE',"%{$this->filtroCodigoCliente}%")
+        ->whereRelation('cliente','nombres_cliente','LIKE',"%{$this->filtroNombreCliente}%")
+        ->sum('total_nota_credito');
 
 
 
@@ -263,12 +282,14 @@ public function exportarGeneral()
 
 public function exportarFila($id)
 {
-    $nota_credito=NotaCredito::with('venta')->find($id)->toArray();
-    $venta=Venta::find($nota_credito['venta_id'])->toArray();
-    $no_venta=$nota_credito['venta_id'];
-    $cliente=Cliente::find($nota_credito['venta']['cliente_id'])->toArray();
+
+
+    $nota_credito=NotaCredito::with('venta')->with('cliente')->find($id);
+
+
+
         $fecha_reporte=Carbon::now()->toDateTimeString();
-        $pdf = Pdf::loadView('/livewire/pdf/pdfNotaCredito',['venta' => $venta,'cliente'=>$cliente,'nota_credito'=>$nota_credito]);
+        $pdf = Pdf::loadView('/livewire/pdf/pdfNotaCredito',['dato'=>$nota_credito]);
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->setPaper('leter')->stream();
             }, "$this->title-$fecha_reporte.pdf");
