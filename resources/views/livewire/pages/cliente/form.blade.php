@@ -2,7 +2,7 @@
 
     <div class="flex w-full ">
         <div class="w-full md:w-1/5 ">
-            <x-frk.components.select label="Tipo Cliente" :disabled="$disabled"  error="tipo_cliente_id" wire:model.live="tipo_cliente_id">
+            <x-frk.components.select label="Tipo Clientesss" :disabled="$disabled"  error="tipo_cliente_id" wire:model.live="tipo_cliente_id">
                 @foreach ($this->tipo_clientes as $data)
                 <option value="{{ $data['valor'] }}" wire:key="producto-{{ $data['id'] }}">{{ $data['nombre'] }}</option>
                 @endforeach
